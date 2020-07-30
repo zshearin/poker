@@ -1,12 +1,11 @@
 package main
 
 import (
-	"deck"
 	"fmt"
 )
 
 func main() {
-	deck := deck.GetDeck()
+	deck := GetDeck()
 	fmt.Println("Unshuffled deck:")
 	deck.PrintOrder()
 

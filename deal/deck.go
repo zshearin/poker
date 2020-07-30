@@ -1,4 +1,4 @@
-package deck
+package main
 
 import (
 	"math/rand"
@@ -25,7 +25,7 @@ func GetDeck() Deck {
 	*/
 
 	suits := []string{"S", "H", "C", "D"}
-	values := []string{"2","3","4","5","6","7","8","9","T","J","Q","K"}
+	values := []string{"2","3","4","5","6","7","8","9","T","J","Q","K", "A"}
 	var deck Deck
 
 	for _, suit := range suits {
@@ -51,10 +51,16 @@ func (d Deck) Shuffle() {
 //PrintOrder prints the order of the deck
 func (d Deck) PrintOrder() {
 	var b bytes.Buffer
-	for _, card := range d {
+	for index, card := range d {
 		b.WriteString(card.Value)
 		b.WriteString(card.Suit)
-		b.WriteString("\n")
+		
+		//b.WriteString("\n")
+		if (index +1) % 13 == 0 {
+			b.WriteString("\n")
+		} else {
+			b.WriteString(", ")
+		}
 	}
 
 	fmt.Printf(b.String())
