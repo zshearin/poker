@@ -72,6 +72,10 @@ func (d Deck) PrintOrder() {
 
 func (d Deck) PrintRemainingCards() {
         var b bytes.Buffer
+	b.WriteString("Remaining Cards:\n")
+	remainingCards := 64 - d.NextCardIndex
+
+	mod := remainingCards / 6 
         for index, card := range d.Cards {
 		if index < d.NextCardIndex {
 			continue
@@ -79,8 +83,8 @@ func (d Deck) PrintRemainingCards() {
                 b.WriteString(card.Value)
                 b.WriteString(card.Suit)
 
-                //b.WriteString("\n")
-                if (index +1) % 13 == 0 {
+                //make the next card the "0" placement
+		if (index +1 - d.NextCardIndex) % mod == 0 {
                         b.WriteString("\n")
                 } else {
                         b.WriteString(", ")
