@@ -3,9 +3,6 @@ package main
 import (
 	"math/rand"
 	"time"
-	"bytes"
-	"fmt"
-	"strconv"
 )
 
 //Card is a single element in the deck
@@ -14,22 +11,24 @@ type Card struct {
 	Value string
 }
 
+type Cards []Card
+type Hands []Cards
 
 type Deck struct {
-	Cards []Card
+	Cards         []Card
 	NextCardIndex int
 }
 
 //GetDeck returns a sorted deck of cards
 func GetDeck() Deck {
 	/*
-	suits := []string{"Spades", "Hearts", "Clubs", "Diamonds"}
-	values := []string{"Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
-		"Nine", "Ten", "Jack", "Queen", "King", "Ace"}
+		suits := []string{"Spades", "Hearts", "Clubs", "Diamonds"}
+		values := []string{"Two", "Three", "Four", "Five", "Six", "Seven", "Eight",
+			"Nine", "Ten", "Jack", "Queen", "King", "Ace"}
 	*/
 
 	suits := []string{"S", "H", "C", "D"}
-	values := []string{"2","3","4","5","6","7","8","9","T","J","Q","K", "A"}
+	values := []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"}
 	var deck Deck
 
 	for _, suit := range suits {
@@ -48,108 +47,75 @@ func GetDeck() Deck {
 
 //Shuffle shuffles a deck of cards
 func (d *Deck) Shuffle() {
+//	fmt.Println("Shuffling Deck\n")
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(d.Cards), func(i, j int) { d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i] })
 }
-
-//PrintOrder prints the order of the deck
-func (d Deck) PrintOrder() {
-	var b bytes.Buffer
-	for index, card := range d.Cards {
-		b.WriteString(card.Value)
-		b.WriteString(card.Suit)
-
-		//b.WriteString("\n")
-		if (index +1) % 13 == 0 {
-			b.WriteString("\n")
-		} else {
-			b.WriteString(", ")
-		}
-	}
-        b.WriteString("\n")
-	fmt.Printf(b.String())
-}
-
-func (d Deck) PrintRemainingCards() {
-        var b bytes.Buffer
-	b.WriteString("Remaining Cards:\n")
-	remainingCards := 64 - d.NextCardIndex
-
-	mod := remainingCards / 6 
-        for index, card := range d.Cards {
-		if index < d.NextCardIndex {
-			continue
-		}
-                b.WriteString(card.Value)
-                b.WriteString(card.Suit)
-
-                //make the next card the "0" placement
-		if (index +1 - d.NextCardIndex) % mod == 0 {
-                        b.WriteString("\n")
-                } else {
-                        b.WriteString(", ")
-                }
-        }
-        b.WriteString("\n")
-        fmt.Printf(b.String())
-}
-
 
 func (d *Deck) DealHoldem(numHands int) Hands {
 	return d.Deal(numHands, 2)
 }
 
-type Hand []Card
-type Hands []Hand
+func (d *Deck) GetFlop() Cards {
+	return d.BurnAndFlip(3)
+}
 
-func (h Hands) PrintHands() {
-	var b bytes.Buffer
-	for index, hand := range h {
-		        b.WriteString("Hand ")
-                        b.WriteString(strconv.Itoa(index +1))
-                        b.WriteString(": ")
+func (d *Deck) GetTurn() Cards {
+	return d.BurnAndFlip(1)
+}
 
-		for i, card := range hand {
-			b.WriteString(card.Value)
-			b.WriteString(card.Suit)
-			if i != len(hand) - 1 {
-				b.WriteString(", ")
-			}
-		}
-		b.WriteString("\n")
+func (d *Deck) GetRiver() Cards {
+	return d.BurnAndFlip(1)
+}
+
+func (d *Deck) Reset() {
+	d.NextCardIndex = 0
+}
+
+func (d *Deck) GetCard() Card {
+	var card Card
+
+	card = d.Cards[d.NextCardIndex]
+	d.NextCardIndex++
+	return card
+}
+
+func (d *Deck) BurnAndFlip(numCards int) Cards{
+
+	var cards Cards
+
+	//Burn a card:
+	d.GetCard()
+
+	for i := 0; i < numCards; i++ {
+
+		nextCard := d.GetCard()
+		cards = append(cards, nextCard)
 	}
-	b.WriteString("\n")
+	return cards
 
-	fmt.Printf(b.String())
 }
 
 func (d *Deck) Deal(numHands, numCards int) Hands {
 
-	//1 - create DS to store hands in 
-
-	//2 - iterate through and add cards to those hands
-
-
 	var hands Hands
 
 	for i := 0; i < numHands; i++ {
-
 		hand := []Card{}
 		hands = append(hands, hand)
 	}
 
 	for i := 0; i < numCards; i++ {
-
 		for j := 0; j < numHands; j++ {
 			curHand := hands[j]
-			curHand = append(curHand, d.Cards[d.NextCardIndex])
+			nextCard := d.GetCard()
+			curHand = append(curHand, nextCard)
+			//curHand = append(curHand, d.Cards[d.NextCardIndex])
+			hands[j] = curHand
 
-			hands[j] = curHand 
-			d.NextCardIndex++
+			//d.NextCardIndex++
 		}
 	}
 
-
 	return hands
 }
-
