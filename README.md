@@ -1,3 +1,3 @@
 # poker-go
 
-Right now all this does is shuffle a deck and deal
+Right now this shuffles a deck, deals out hands, gets flop turn and river, and evaluates some hands (straight, flush and straight-flush)
