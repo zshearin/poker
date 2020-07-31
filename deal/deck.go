@@ -7,8 +7,9 @@ import (
 
 //Card is a single element in the deck
 type Card struct {
-	Suit  string
-	Value string
+	Suit   string
+	Value  string
+	Number int //for evaluation purposes - 2,3,4,5,6,7,8,9,10,11,12,13,14 (ace is 14)
 }
 
 type Cards []Card
@@ -29,13 +30,15 @@ func GetDeck() Deck {
 
 	suits := []string{"S", "H", "C", "D"}
 	values := []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"}
+	numbers := []int{2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}
 	var deck Deck
 
 	for _, suit := range suits {
-		for _, value := range values {
+		for index, value := range values {
 			currentCard := Card{
-				Suit:  suit,
-				Value: value,
+				Suit:   suit,
+				Value:  value,
+				Number: numbers[index],
 			}
 			deck.Cards = append(deck.Cards, currentCard)
 		}
@@ -47,7 +50,7 @@ func GetDeck() Deck {
 
 //Shuffle shuffles a deck of cards
 func (d *Deck) Shuffle() {
-//	fmt.Println("Shuffling Deck\n")
+	//	fmt.Println("Shuffling Deck\n")
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(d.Cards), func(i, j int) { d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i] })
 }
@@ -80,7 +83,7 @@ func (d *Deck) GetCard() Card {
 	return card
 }
 
-func (d *Deck) BurnAndFlip(numCards int) Cards{
+func (d *Deck) BurnAndFlip(numCards int) Cards {
 
 	var cards Cards
 
@@ -118,4 +121,40 @@ func (d *Deck) Deal(numHands, numCards int) Hands {
 	}
 
 	return hands
+}
+
+/*
+type Person struct {
+    Name string
+    Age  int
+}
+
+// ByAge implements sort.Interface based on the Age field.
+type ByAge []Person
+
+func (a ByAge) Len() int           { return len(a) }
+func (a ByAge) Less(i, j int) bool { return a[i].Age < a[j].Age }
+func (a ByAge) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+
+func main() {
+    family := []Person{
+        {"Alice", 23},
+        {"Eve", 2},
+        {"Bob", 25},
+    }
+    sort.Sort(ByAge(family))
+    fmt.Println(family) // [{Eve 2} {Alice 23} {Bob 25}]
+}
+*/
+
+//ByNumber implemented for sort function to sort cards by number
+type ByNumber Cards
+
+func (n ByNumber) Len() int           { return len(n) }
+func (n ByNumber) Less(i, j int) bool { return n[i].Number > n[j].Number }
+func (n ByNumber) Swap(i, j int)      { n[i], n[j] = n[j], n[i] }
+
+//Sort highest to lowest based on "number"
+func (c *Cards) Sort() {
+
 }
