@@ -1,38 +1,36 @@
 package main
 
-import "fmt"
-
-/*
 import (
 	"fmt"
+
+	"github.com/zshearin/poker-go/deal"
 )
-*/
 
 func main() {
-	deck := GetDeck()
+	deck := deal.GetDeck()
 
 	deck.PrintOrder()
 	//deck.Shuffle()
 	//deck.Shuffle()
 	//deck.PrintOrder()
 
-	cards := Cards{
-		Card{
+	cards := deal.Cards{
+		deal.Card{
 			Suit:   "H",
 			Value:  "A",
 			Number: 14,
 		},
-		Card{
+		deal.Card{
 			Suit:   "H",
 			Value:  "2",
 			Number: 2,
 		},
-		Card{
+		deal.Card{
 			Suit:   "H",
 			Value:  "3",
 			Number: 3,
 		},
-		Card{
+		deal.Card{
 			Suit:   "H",
 			Value:  "4",
 			Number: 4,
@@ -44,7 +42,7 @@ func main() {
 				Number: 10,
 			},
 		*/
-		Card{
+		deal.Card{
 			Suit:   "S",
 			Value:  "5",
 			Number: 5,
