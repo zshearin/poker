@@ -6,33 +6,8 @@ import (
 	"strconv"
 )
 
-/*
-func Evaluate(c Cards) {
-	if len(c) < 5 {
-		errors.New("need at least 5 cards to evaluate strength")
-		return err
-	}
-
-
-
-
-}
-
-//1 convert cards to numeric values
-//2 order the cards
-
-/*
-
-6C    TH    7S    TS    3D
-Hand 1: QC, 9S
-Hand 2: KH, 5D
-Hand 3: 2S, 4H
-Hand 4: TC, JH
-Hand 5: 3C, 7C
-
-*/
-
-//Evaluate evaluates the hand and prints out what it is For now I'm going to print out what it is
+//Evaluate evaluates the hand and prints out what it is
+// For now I'm going to print out what it is but later should return something
 func (c *Cards) Evaluate() Cards {
 
 	sort.Sort(ByNumber(*c))
@@ -47,9 +22,37 @@ func (c *Cards) Evaluate() Cards {
 		return straightFlushCards
 	}
 
-	isQuads, cardVal := checkForQuads(cards)
+	isQuads, cardsFound := checkForQuads(cards)
 	if isQuads {
-		fmt.Println("quads: " + cardVal.Value)
+
+		cardSet := getCardSet(cards)
+
+		fmt.Println("old card set: ")
+		printCardSet(cardSet)
+
+		newCardSet := removeCardsFromCardSet(cardSet, cardsFound)
+
+		fmt.Println("new card set: ")
+		printCardSet(newCardSet)
+		/*
+			fmt.Println("quads: ")
+			for _, value := range cardsFound {
+				fmt.Println(value.Suit + value.Value)
+			}
+
+			removed1Card := removeCard(cards, cardsFound[0])
+			removed2Cards := removeCard(removed1Card, cardsFound[1])
+			removed3Cards := removeCard(removed2Cards, cardsFound[2])
+			removed4Cards := removeCard(removed3Cards, cardsFound[3])
+
+			fmt.Println("cards left to evaluate: ")
+			for _, value := range removed4Cards {
+				fmt.Println(value.Suit + value.Value)
+			}
+		*/
+		//1 remove quad value from list of cards
+		//2 grab higest value card out of rest
+
 		//TODO - HAVE TO ADD FUNCTION TO GET HIGH CARD FROM THE REST OF THE CARDS
 
 	}
@@ -86,6 +89,39 @@ func (c *Cards) Evaluate() Cards {
 	return Cards{}
 }
 
+func removeCardsFromCardSet(cardSet map[Card]bool, cardsToRemove Cards) map[Card]bool {
+
+	for _, curCard := range cardsToRemove {
+		cardSet[curCard] = false
+	}
+
+	return cardSet
+
+}
+
+func printCardSet(cardSet map[Card]bool) {
+
+	for card, value := range cardSet {
+		if value == true {
+			fmt.Println(card.Suit + card.Value + " ")
+		}
+	}
+}
+
+//create set out of all the cards
+
+func getCardSet(cards Cards) map[Card]bool {
+
+	cardSet := make(map[Card]bool)
+
+	for _, currentCard := range cards {
+		cardSet[currentCard] = true
+	}
+
+	return cardSet
+
+}
+
 func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
 	for _, value := range suitMap {
 		if len(value) >= 5 {
@@ -96,18 +132,27 @@ func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
 	return false, Cards{}
 }
 
-func checkForQuads(cards Cards) (bool, Card) {
+func checkForQuads(cards Cards) (bool, Cards) {
 	//Next - four of a kind
 	numMap := cards.getCardValues()
 
+	var fourOfAKindCards Cards
+
 	for key, value := range numMap {
 		if value == 4 {
-			return true, Card{
-				Value: key,
+
+			for _, curCard := range cards {
+
+				if curCard.Value == key {
+					fourOfAKindCards = append(fourOfAKindCards, curCard)
+				}
+
 			}
+			return true, fourOfAKindCards
+
 		}
 	}
-	return false, Card{}
+	return false, fourOfAKindCards
 }
 
 func getSuits(cards Cards) map[string]Cards {

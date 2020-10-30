@@ -35,9 +35,9 @@ func printBestFive(cards poker.Cards) {
 func getCardsToEvaluate() poker.Cards {
 	cards := poker.Cards{
 		poker.Card{
-			Suit:   "H",
-			Value:  "A",
-			Number: 14,
+			Suit:   "S",
+			Value:  "2",
+			Number: 2,
 		},
 		poker.Card{
 			Suit:   "H",
@@ -45,14 +45,14 @@ func getCardsToEvaluate() poker.Cards {
 			Number: 2,
 		},
 		poker.Card{
-			Suit:   "H",
-			Value:  "3",
-			Number: 3,
+			Suit:   "D",
+			Value:  "2",
+			Number: 2,
 		},
 		poker.Card{
-			Suit:   "H",
-			Value:  "4",
-			Number: 4,
+			Suit:   "C",
+			Value:  "2",
+			Number: 2,
 		},
 		/*
 			Card{
