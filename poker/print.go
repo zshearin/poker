@@ -1,4 +1,4 @@
-package deal
+package poker
 
 import (
 	"bytes"
@@ -25,6 +25,7 @@ func (d Deck) PrintOrder() {
 	fmt.Printf(b.String())
 }
 
+//PrintRemainingCards prints the remaining cards in the deck
 func (d Deck) PrintRemainingCards() {
 	var b bytes.Buffer
 	b.WriteString("Remaining Cards:\n")
@@ -49,6 +50,7 @@ func (d Deck) PrintRemainingCards() {
 	fmt.Printf(b.String())
 }
 
+//Print prints hands
 func (h Hands) Print() {
 	var b bytes.Buffer
 	for index, hand := range h {
@@ -70,6 +72,7 @@ func (h Hands) Print() {
 	fmt.Printf(b.String())
 }
 
+//Print prints cards
 func (c Cards) Print(cardCategory string) {
 	var b bytes.Buffer
 	b.WriteString(cardCategory)

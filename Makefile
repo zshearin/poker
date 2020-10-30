@@ -1,5 +1,5 @@
 build:
-	go build ./deal
+	go build main.go 
 
 run:
-	go run ./deal
+	go run main.go
