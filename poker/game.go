@@ -1,5 +1,6 @@
-package deal
+package poker
 
+//Game is the cards for the flop, turn, river and hands dealt to each player
 type Game struct {
 	Hands Hands
 	Flop  Cards
@@ -7,6 +8,7 @@ type Game struct {
 	River Cards
 }
 
+//PrintBoard prints the board for a game
 func (g *Game) PrintBoard() {
 
 	var board Cards
@@ -26,10 +28,12 @@ func (g *Game) PrintBoard() {
 	board.Print("Board")
 }
 
+//PrintHands prints the hands for a game
 func (g *Game) PrintHands() {
 	g.Hands.Print()
 }
 
+//GetGame deals hands and returns a game object
 func (d *Deck) GetGame(players int) Game {
 
 	hands := d.Deal(players, 2)

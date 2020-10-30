@@ -1,4 +1,4 @@
-package deal
+package poker
 
 import (
 	"fmt"
@@ -134,6 +134,8 @@ func getSuits(cards Cards) map[string]Cards {
 func checkForStraightFlush(suitMap map[string]Cards) (bool, Cards) {
 
 	for _, cards := range suitMap {
+
+		//sort the cards of the same suit
 		sort.Sort(ByNumber(cards))
 
 		if len(cards) > 0 {

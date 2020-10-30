@@ -3,34 +3,53 @@ package main
 import (
 	"fmt"
 
-	"github.com/zshearin/poker-go/deal"
+	"github.com/zshearin/poker-go/poker"
 )
 
 func main() {
-	deck := deal.GetDeck()
 
-	deck.PrintOrder()
-	//deck.Shuffle()
-	//deck.Shuffle()
-	//deck.PrintOrder()
+	//deck := getShuffledDeck()
+	getShuffledDeck()
 
-	cards := deal.Cards{
-		deal.Card{
+	cards := getCardsToEvaluate()
+
+	printBestFive(cards)
+
+}
+
+func printBestFive(cards poker.Cards) {
+
+	bestFiveCards := cards.Evaluate()
+
+	for _, card := range bestFiveCards {
+		val := card.Value
+		if card.Value == "1" {
+			val = "A"
+		}
+		fmt.Printf(val + card.Suit + "  ")
+	}
+
+}
+
+//function implemented for testing - should create unit tests instead
+func getCardsToEvaluate() poker.Cards {
+	cards := poker.Cards{
+		poker.Card{
 			Suit:   "H",
 			Value:  "A",
 			Number: 14,
 		},
-		deal.Card{
+		poker.Card{
 			Suit:   "H",
 			Value:  "2",
 			Number: 2,
 		},
-		deal.Card{
+		poker.Card{
 			Suit:   "H",
 			Value:  "3",
 			Number: 3,
 		},
-		deal.Card{
+		poker.Card{
 			Suit:   "H",
 			Value:  "4",
 			Number: 4,
@@ -42,7 +61,7 @@ func main() {
 				Number: 10,
 			},
 		*/
-		deal.Card{
+		poker.Card{
 			Suit:   "S",
 			Value:  "5",
 			Number: 5,
@@ -55,20 +74,21 @@ func main() {
 			},
 		*/
 	}
-
-	bestFiveCards := cards.Evaluate()
-
-	for _, card := range bestFiveCards {
-		val := card.Value
-		if card.Value == "1" {
-			val = "A"
-		}
-		fmt.Printf(val + card.Suit + "  ")
-	}
-
-	/*
-		game1 := deck.GetGame(5)
-		game1.PrintBoard()
-		game1.PrintHands()
-	*/
+	return cards
 }
+
+func getShuffledDeck() poker.Deck {
+	deck := poker.GetDeck()
+
+	//	deck.PrintOrder()
+	deck.Shuffle()
+	deck.Shuffle()
+	//	deck.PrintOrder()
+	return deck
+}
+
+/*
+	game1 := deck.GetGame(5)
+	game1.PrintBoard()
+	game1.PrintHands()
+*/

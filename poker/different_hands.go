@@ -1,4 +1,4 @@
-package deal
+package poker
 
 /*
 cards := Cards{
