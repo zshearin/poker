@@ -20,24 +20,26 @@ func main() {
 func printBestFive(cards poker.Cards) {
 
 	bestFiveCards := cards.Evaluate()
-
+	fmt.Println("=================")
+	fmt.Println("Five best cards (won't print unless quads/straight flush observed):")
 	for _, card := range bestFiveCards {
 		val := card.Value
 		if card.Value == "1" {
 			val = "A"
 		}
-		fmt.Printf(val + card.Suit + "  ")
+		fmt.Printf(val + card.Suit + " ")
 	}
-
+	fmt.Println("\n=================")
+	fmt.Printf("\n")
 }
 
 //function implemented for testing - should create unit tests instead
 func getCardsToEvaluate() poker.Cards {
 	cards := poker.Cards{
 		poker.Card{
-			Suit:   "H",
-			Value:  "A",
-			Number: 14,
+			Suit:   "S",
+			Value:  "2",
+			Number: 2,
 		},
 		poker.Card{
 			Suit:   "H",
@@ -45,14 +47,14 @@ func getCardsToEvaluate() poker.Cards {
 			Number: 2,
 		},
 		poker.Card{
-			Suit:   "H",
-			Value:  "3",
-			Number: 3,
+			Suit:   "D",
+			Value:  "2",
+			Number: 2,
 		},
 		poker.Card{
-			Suit:   "H",
-			Value:  "4",
-			Number: 4,
+			Suit:   "C",
+			Value:  "2",
+			Number: 2,
 		},
 		/*
 			Card{
@@ -66,6 +68,37 @@ func getCardsToEvaluate() poker.Cards {
 			Value:  "5",
 			Number: 5,
 		},
+
+		poker.Card{
+			Suit:   "S",
+			Value:  "10",
+			Number: 10,
+		},
+
+		poker.Card{
+			Suit:   "D",
+			Value:  "J",
+			Number: 11,
+		},
+
+		poker.Card{
+			Suit:   "D",
+			Value:  "Q",
+			Number: 12,
+		},
+		/*
+				poker.Card{
+					Suit:   "H",
+					Value:  "K",
+					Number: 13,
+				},
+			poker.Card{
+				Suit:   "D",
+				Value:  "A",
+				Number: 14,
+			},
+		*/
+
 		/*
 			Card{
 				Suit:   "H",

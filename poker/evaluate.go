@@ -6,58 +6,42 @@ import (
 	"strconv"
 )
 
-/*
-func Evaluate(c Cards) {
-	if len(c) < 5 {
-		errors.New("need at least 5 cards to evaluate strength")
-		return err
-	}
-
-
-
-
-}
-
-//1 convert cards to numeric values
-//2 order the cards
-
-/*
-
-6C    TH    7S    TS    3D
-Hand 1: QC, 9S
-Hand 2: KH, 5D
-Hand 3: 2S, 4H
-Hand 4: TC, JH
-Hand 5: 3C, 7C
-
-*/
-
-//Evaluate evaluates the hand and prints out what it is For now I'm going to print out what it is
+//Evaluate evaluates the hand and prints out what it is
+// For now I'm going to print out what it is but later should return something
 func (c *Cards) Evaluate() Cards {
 
 	sort.Sort(ByNumber(*c))
 
 	cards := *c
 
-	suitMap := getSuits(cards)
+	suitMap := getSuitToCardsMap(cards)
 
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
-		fmt.Println("Straight flush, returning hand")
+		fmt.Println("straight flush")
 		return straightFlushCards
 	}
 
-	isQuads, cardVal := checkForQuads(cards)
+	isQuads, cardsFound := checkForQuads(cards)
 	if isQuads {
-		fmt.Println("quads: " + cardVal.Value)
-		//TODO - HAVE TO ADD FUNCTION TO GET HIGH CARD FROM THE REST OF THE CARDS
+		fmt.Println("quads")
 
+		cardSet := getCardSet(cards)
+		//1 remove quad value from list of cards
+		newCardSet := removeCardsFromCardSet(cardSet, cardsFound)
+
+		//2 grab higest value card out of rest
+		highCard := getHighestCard(newCardSet)
+		cardsFound = append(cardsFound, highCard)
+
+		return cardsFound
 	}
 
 	//TODO - Add processing full house here (make sure to consider best full house, not just any - rare but can happen)
 	//scenarios that there are multiple:
 	//	1. person has 3 of one card and 3 of another (ie board: T T J J K, hand: J T -> best would be JJJTT but could have JJTTT)
 	//  2. person has 3 of one card and 2 of 2 different cards (ie  T T J J K, hand: K J -> best would be JJJKK but could have JJJTT)
+	//ALSO BEST PRACTICE FOR THIS ONE WOULD BE TO HANDLE ANY NUMBER OF CARDS AND PRINT OUT THE BEST
 
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
@@ -86,6 +70,53 @@ func (c *Cards) Evaluate() Cards {
 	return Cards{}
 }
 
+//TODO - ADD CHECK TO SEE IF THERE ARE ANY CARDS LEFT AND RETURN AN ERROR IF THERE ARE NONE
+func getHighestCard(cardSet map[Card]bool) Card {
+	var highCard Card
+	curVal := 0
+	for card, exists := range cardSet {
+		if exists && card.Number > curVal {
+			curVal = card.Number
+			highCard = card
+		}
+	}
+
+	return highCard
+}
+
+func removeCardsFromCardSet(cardSet map[Card]bool, cardsToRemove Cards) map[Card]bool {
+
+	for _, curCard := range cardsToRemove {
+		cardSet[curCard] = false
+	}
+
+	return cardSet
+
+}
+
+func printCardSet(cardSet map[Card]bool) {
+
+	for card, value := range cardSet {
+		if value == true {
+			fmt.Println(card.Suit + card.Value + " ")
+		}
+	}
+}
+
+//create set out of all the cards
+
+func getCardSet(cards Cards) map[Card]bool {
+
+	cardSet := make(map[Card]bool)
+
+	for _, currentCard := range cards {
+		cardSet[currentCard] = true
+	}
+
+	return cardSet
+
+}
+
 func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
 	for _, value := range suitMap {
 		if len(value) >= 5 {
@@ -96,21 +127,30 @@ func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
 	return false, Cards{}
 }
 
-func checkForQuads(cards Cards) (bool, Card) {
+func checkForQuads(cards Cards) (bool, Cards) {
 	//Next - four of a kind
 	numMap := cards.getCardValues()
 
+	var fourOfAKindCards Cards
+
 	for key, value := range numMap {
 		if value == 4 {
-			return true, Card{
-				Value: key,
+
+			for _, curCard := range cards {
+
+				if curCard.Value == key {
+					fourOfAKindCards = append(fourOfAKindCards, curCard)
+				}
+
 			}
+			return true, fourOfAKindCards
+
 		}
 	}
-	return false, Card{}
+	return false, fourOfAKindCards
 }
 
-func getSuits(cards Cards) map[string]Cards {
+func getSuitToCardsMap(cards Cards) map[string]Cards {
 
 	var suitMap map[string]Cards
 
