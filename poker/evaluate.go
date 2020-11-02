@@ -41,6 +41,7 @@ func (c *Cards) Evaluate() Cards {
 	//scenarios that there are multiple:
 	//	1. person has 3 of one card and 3 of another (ie board: T T J J K, hand: J T -> best would be JJJTT but could have JJTTT)
 	//  2. person has 3 of one card and 2 of 2 different cards (ie  T T J J K, hand: K J -> best would be JJJKK but could have JJJTT)
+	//ALSO BEST PRACTICE FOR THIS ONE WOULD BE TO HANDLE ANY NUMBER OF CARDS AND PRINT OUT THE BEST
 
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
@@ -69,7 +70,7 @@ func (c *Cards) Evaluate() Cards {
 	return Cards{}
 }
 
-//TODO - ADD CHECK TO SEE IF THERE ARE ANY CARDS LEFT AND RETURN AN ERROR IF SO
+//TODO - ADD CHECK TO SEE IF THERE ARE ANY CARDS LEFT AND RETURN AN ERROR IF THERE ARE NONE
 func getHighestCard(cardSet map[Card]bool) Card {
 	var highCard Card
 	curVal := 0
