@@ -114,3 +114,73 @@ func TestCards_Evaluate(t *testing.T) {
 		},
 	}
 */
+
+//High card
+/*
+	cards := poker.Cards{
+		poker.Card{
+			Suit:   "S",
+			Value:  "2",
+			Number: 2,
+		},
+		poker.Card{
+			Suit:   "H",
+			Value:  "2",
+			Number: 2,
+		},
+		poker.Card{
+			Suit:   "D",
+			Value:  "2",
+			Number: 2,
+		},
+		poker.Card{
+			Suit:   "C",
+			Value:  "2",
+			Number: 2,
+		},
+			Card{
+				Suit:   "H",
+				Value:  "10",
+				Number: 10,
+			},
+		poker.Card{
+			Suit:   "S",
+			Value:  "5",
+			Number: 5,
+		},
+
+		poker.Card{
+			Suit:   "S",
+			Value:  "10",
+			Number: 10,
+		},
+
+		poker.Card{
+			Suit:   "D",
+			Value:  "J",
+			Number: 11,
+		},
+
+		poker.Card{
+			Suit:   "D",
+			Value:  "Q",
+			Number: 12,
+		},
+				poker.Card{
+					Suit:   "H",
+					Value:  "K",
+					Number: 13,
+				},
+			poker.Card{
+				Suit:   "D",
+				Value:  "A",
+				Number: 14,
+			},
+			Card{
+				Suit:   "H",
+				Value:  "5",
+				Number: 5,
+			},
+	}
+
+*/

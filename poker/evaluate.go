@@ -14,47 +14,27 @@ func (c *Cards) Evaluate() Cards {
 
 	cards := *c
 
-	suitMap := getSuits(cards)
+	suitMap := getSuitToCardsMap(cards)
 
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
-		fmt.Println("Straight flush, returning hand")
+		fmt.Println("straight flush")
 		return straightFlushCards
 	}
 
 	isQuads, cardsFound := checkForQuads(cards)
 	if isQuads {
+		fmt.Println("quads")
 
 		cardSet := getCardSet(cards)
-
-		fmt.Println("old card set: ")
-		printCardSet(cardSet)
-
+		//1 remove quad value from list of cards
 		newCardSet := removeCardsFromCardSet(cardSet, cardsFound)
 
-		fmt.Println("new card set: ")
-		printCardSet(newCardSet)
-		/*
-			fmt.Println("quads: ")
-			for _, value := range cardsFound {
-				fmt.Println(value.Suit + value.Value)
-			}
-
-			removed1Card := removeCard(cards, cardsFound[0])
-			removed2Cards := removeCard(removed1Card, cardsFound[1])
-			removed3Cards := removeCard(removed2Cards, cardsFound[2])
-			removed4Cards := removeCard(removed3Cards, cardsFound[3])
-
-			fmt.Println("cards left to evaluate: ")
-			for _, value := range removed4Cards {
-				fmt.Println(value.Suit + value.Value)
-			}
-		*/
-		//1 remove quad value from list of cards
 		//2 grab higest value card out of rest
+		highCard := getHighestCard(newCardSet)
+		cardsFound = append(cardsFound, highCard)
 
-		//TODO - HAVE TO ADD FUNCTION TO GET HIGH CARD FROM THE REST OF THE CARDS
-
+		return cardsFound
 	}
 
 	//TODO - Add processing full house here (make sure to consider best full house, not just any - rare but can happen)
@@ -87,6 +67,20 @@ func (c *Cards) Evaluate() Cards {
 	//TODO - ADD PROCESSING HIGH CARD - MAY WANT TO START WITH THIS ONE - WILL HELP WITH THE OTHERS
 
 	return Cards{}
+}
+
+//TODO - ADD CHECK TO SEE IF THERE ARE ANY CARDS LEFT AND RETURN AN ERROR IF SO
+func getHighestCard(cardSet map[Card]bool) Card {
+	var highCard Card
+	curVal := 0
+	for card, exists := range cardSet {
+		if exists && card.Number > curVal {
+			curVal = card.Number
+			highCard = card
+		}
+	}
+
+	return highCard
 }
 
 func removeCardsFromCardSet(cardSet map[Card]bool, cardsToRemove Cards) map[Card]bool {
@@ -155,7 +149,7 @@ func checkForQuads(cards Cards) (bool, Cards) {
 	return false, fourOfAKindCards
 }
 
-func getSuits(cards Cards) map[string]Cards {
+func getSuitToCardsMap(cards Cards) map[string]Cards {
 
 	var suitMap map[string]Cards
 
