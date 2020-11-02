@@ -48,8 +48,8 @@ func getCardsToEvaluate() poker.Cards {
 		},
 		poker.Card{
 			Suit:   "D",
-			Value:  "2",
-			Number: 2,
+			Value:  "3",
+			Number: 3,
 		},
 		poker.Card{
 			Suit:   "C",
@@ -57,34 +57,34 @@ func getCardsToEvaluate() poker.Cards {
 			Number: 2,
 		},
 		/*
-			Card{
-				Suit:   "H",
-				Value:  "10",
-				Number: 10,
+			poker.Card{
+				Suit:   "C",
+				Value:  "4",
+				Number: 4,
 			},
 		*/
 		poker.Card{
 			Suit:   "S",
-			Value:  "5",
-			Number: 5,
+			Value:  "3",
+			Number: 3,
 		},
 
 		poker.Card{
-			Suit:   "S",
-			Value:  "10",
-			Number: 10,
-		},
-
-		poker.Card{
-			Suit:   "D",
-			Value:  "J",
-			Number: 11,
+			Suit:   "H",
+			Value:  "3",
+			Number: 3,
 		},
 
 		poker.Card{
 			Suit:   "D",
-			Value:  "Q",
-			Number: 12,
+			Value:  "4",
+			Number: 4,
+		},
+
+		poker.Card{
+			Suit:   "H",
+			Value:  "4",
+			Number: 4,
 		},
 		/*
 				poker.Card{

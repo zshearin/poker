@@ -60,6 +60,27 @@ func (c *Cards) Evaluate() Cards {
 	}
 
 	//TODO - ADD PROCESSING THREE OF A KIND
+	isThreeOfAKind, foundCards := getHighestThreeOfAKind(cards)
+	if isThreeOfAKind {
+		fmt.Println("is three of a kind")
+		//TODO - MAKE LOGIC BETTER IN FUNC IMPLEMENTATION AND ADD EVAL OF NEXT HIGHEST 2 CARDS
+
+		cardSet := getCardSet(cards)
+		//1 remove quad value from list of cards
+		newCardSet := removeCardsFromCardSet(cardSet, foundCards)
+
+		//2 grab higest value card out of rest
+		highCard := getHighestCard(newCardSet)
+		foundCards = append(foundCards, highCard)
+
+		newCardSet2 := removeCardsFromCardSet(newCardSet, Cards{highCard})
+
+		highCard2 := getHighestCard(newCardSet2)
+		foundCards := append(foundCards, highCard2)
+
+		return foundCards
+	}
+	//	cardSet := getCardSet(cards)
 
 	//TODO - ADD PROCESSING TWO PAIR
 
@@ -150,6 +171,69 @@ func checkForQuads(cards Cards) (bool, Cards) {
 	return false, fourOfAKindCards
 }
 
+func getHighestThreeOfAKind(cards Cards) (bool, Cards) {
+
+	numMap := cards.getCardValues()
+
+	var potentialMatches []string
+
+	for key, value := range numMap {
+		if value == 3 {
+
+			potentialMatches = append(potentialMatches, key)
+		}
+	}
+
+	if len(potentialMatches) == 0 {
+		return false, Cards{}
+	}
+
+	cardSet := getCardSet(cards)
+
+	if len(potentialMatches) == 1 {
+		var foundCards Cards
+		for curCard, exists := range cardSet {
+			if exists && curCard.Value == potentialMatches[0] {
+				foundCards = append(foundCards, curCard)
+			}
+		}
+		return true, foundCards
+	}
+
+	if len(potentialMatches) == 2 {
+		var desiredValue string
+		rank1, err := getCardRanking(potentialMatches[0])
+		if err != nil {
+			fmt.Println("error getting card ranking for value - " + potentialMatches[0])
+		}
+		rank2, err := getCardRanking(potentialMatches[1])
+		if err != nil {
+			fmt.Println("error getting card ranking for value - " + potentialMatches[1])
+		}
+
+		if rank1 > rank2 {
+			desiredValue = potentialMatches[0]
+		} else {
+			desiredValue = potentialMatches[1]
+		}
+
+		var foundCards Cards
+		for curCard, exists := range cardSet {
+			if exists && curCard.Value == desiredValue {
+				foundCards = append(foundCards, curCard)
+			}
+		}
+		return true, foundCards
+
+	}
+
+	if len(potentialMatches) > 2 {
+		fmt.Println("cannot have more than 2 sets of three in a maximum of 7 cards to evaluate.  Please check your input")
+	}
+
+	return false, Cards{}
+}
+
 func getSuitToCardsMap(cards Cards) map[string]Cards {
 
 	var suitMap map[string]Cards
@@ -211,6 +295,23 @@ func (c Cards) getCardValues() map[string]int {
 		numMap[card.Value]++
 	}
 	return numMap
+}
+
+func getCardRanking(value string) (int, error) {
+
+	if value == "A" {
+		return 14, nil
+	} else if value == "K" {
+		return 13, nil
+	} else if value == "Q" {
+		return 12, nil
+	} else if value == "J" {
+		return 11, nil
+	} else if value == "T" {
+		return 10, nil
+	}
+
+	return strconv.Atoi(value)
 }
 
 //GetNumberValues returns list of ints for
