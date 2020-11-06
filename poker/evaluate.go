@@ -6,6 +6,14 @@ import (
 	"strconv"
 )
 
+var orderOfHighest []string
+
+func init() {
+
+	orderOfHighest = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
+
+}
+
 //Evaluate evaluates the hand and prints out what it is
 // For now I'm going to print out what it is but later should return something
 func (c *Cards) Evaluate() Cards {
@@ -14,35 +22,49 @@ func (c *Cards) Evaluate() Cards {
 
 	cards := *c
 
+	//Get suit map - creates four subsets of all the cards for eval
 	suitMap := getSuitToCardsMap(cards)
 
+	//Check straight flush
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
 		fmt.Println("straight flush")
 		return straightFlushCards
 	}
 
-	isQuads, cardsFound := checkForQuads(cards)
+	//Check quads
+	isQuads, cardsFound := checkHighestCardForQuantity(cards, 4)
+
 	if isQuads {
+
 		fmt.Println("quads")
-
-		cardSet := getCardSet(cards)
-		//1 remove quad value from list of cards
-		newCardSet := removeCardsFromCardSet(cardSet, cardsFound)
-
-		//2 grab higest value card out of rest
-		highCard := getHighestCard(newCardSet)
-		cardsFound = append(cardsFound, highCard)
+		cards.Remove(cardsFound)
+		highCards := getNumHighCards(cards, 1)
+		cards.Add(cardsFound)
+		cardsFound = append(cardsFound, highCards...)
 
 		return cardsFound
 	}
 
-	//TODO - Add processing full house here (make sure to consider best full house, not just any - rare but can happen)
-	//scenarios that there are multiple:
-	//	1. person has 3 of one card and 3 of another (ie board: T T J J K, hand: J T -> best would be JJJTT but could have JJTTT)
-	//  2. person has 3 of one card and 2 of 2 different cards (ie  T T J J K, hand: K J -> best would be JJJKK but could have JJJTT)
-	//ALSO BEST PRACTICE FOR THIS ONE WOULD BE TO HANDLE ANY NUMBER OF CARDS AND PRINT OUT THE BEST
+	//Check full house
+	isThreeOfAKind, foundCards := checkHighestCardForQuantity(cards, 3)
+	if isThreeOfAKind {
 
+		cards.Remove(foundCards)
+
+		isPair, foundPair := checkHighestCardForQuantity(cards, 2)
+		//not a full house, add back 3 of a kind for later eval
+		cards.Add(foundCards)
+
+		if isPair {
+			fmt.Println("full house")
+			foundCards = append(foundCards, foundPair...)
+			return foundCards
+		}
+
+	}
+
+	//Check flush
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
 		fmt.Println("flush - suit is: " + flushCards[0].Suit)
@@ -53,6 +75,7 @@ func (c *Cards) Evaluate() Cards {
 	//=======================================================================
 	// below this line, suit no longer matters (but would like to return winning hand with suit)
 
+	//Check straight
 	isStraight, straightCards := checkForFiveInARow(cards)
 	if isStraight {
 		fmt.Println("is straight: ")
@@ -60,61 +83,84 @@ func (c *Cards) Evaluate() Cards {
 	}
 
 	//TODO - ADD PROCESSING THREE OF A KIND
+	isThreeOfAKind, foundCards = checkHighestCardForQuantity(cards, 3)
+	if isThreeOfAKind {
+		fmt.Println("three of a kind")
 
-	//TODO - ADD PROCESSING TWO PAIR
+		cards.Remove(foundCards)
 
-	//TODO - ADD PROCESSING PAIR
+		twoHighCards := getNumHighCards(cards, 2)
+		cards.Add(foundCards)
 
-	//TODO - ADD PROCESSING HIGH CARD - MAY WANT TO START WITH THIS ONE - WILL HELP WITH THE OTHERS
+		foundCards = append(foundCards, twoHighCards...)
 
-	return Cards{}
+		return foundCards
+
+	}
+
+	//Processes Pair and Two Pair
+	isPair, foundCards := checkHighestCardForQuantity(cards, 2)
+	if isPair {
+
+		cards.Remove(foundCards)
+		isTwoPair, secondPair := checkHighestCardForQuantity(cards, 2)
+
+		if isTwoPair {
+			fmt.Println("two pair")
+			cards.Remove(secondPair)
+			foundCards = append(foundCards, secondPair...)
+
+			highCards := getNumHighCards(cards, 1)
+			cards.Remove(highCards)
+			foundCards = append(foundCards, highCards...)
+
+			cards.Add(foundCards)
+			return foundCards
+		}
+
+		fmt.Println("pair")
+		highCards := getNumHighCards(cards, 3)
+
+		cards.Remove(highCards)
+		foundCards = append(foundCards, highCards...)
+
+		cards.Add(foundCards)
+		return foundCards
+
+	}
+
+	//just a high card:
+	fmt.Println("high cards")
+	highCards := getNumHighCards(cards, 5)
+
+	return highCards
 }
 
-//TODO - ADD CHECK TO SEE IF THERE ARE ANY CARDS LEFT AND RETURN AN ERROR IF THERE ARE NONE
-func getHighestCard(cardSet map[Card]bool) Card {
-	var highCard Card
-	curVal := 0
-	for card, exists := range cardSet {
-		if exists && card.Number > curVal {
-			curVal = card.Number
-			highCard = card
+//Add adds cards to a Cards object.  This is intended to be used for failed multistep checks (fullhouse, two pair)
+func (c *Cards) Add(cardsToAdd Cards) {
+
+	for _, cardToAdd := range cardsToAdd {
+		(*c) = append((*c), cardToAdd)
+	}
+
+}
+
+//Remove removes cards from a Cards object
+func (c *Cards) Remove(cardsToRemove Cards) {
+
+	for _, cardToRemove := range cardsToRemove {
+
+		for i, curCard := range *c {
+
+			if cardToRemove.Suit == curCard.Suit &&
+				cardToRemove.Value == curCard.Value {
+				(*c)[i] = (*c)[len(*c)-1]
+				(*c)[len(*c)-1] = Card{}
+				*c = (*c)[:len(*c)-1]
+			}
+
 		}
 	}
-
-	return highCard
-}
-
-func removeCardsFromCardSet(cardSet map[Card]bool, cardsToRemove Cards) map[Card]bool {
-
-	for _, curCard := range cardsToRemove {
-		cardSet[curCard] = false
-	}
-
-	return cardSet
-
-}
-
-func printCardSet(cardSet map[Card]bool) {
-
-	for card, value := range cardSet {
-		if value == true {
-			fmt.Println(card.Suit + card.Value + " ")
-		}
-	}
-}
-
-//create set out of all the cards
-
-func getCardSet(cards Cards) map[Card]bool {
-
-	cardSet := make(map[Card]bool)
-
-	for _, currentCard := range cards {
-		cardSet[currentCard] = true
-	}
-
-	return cardSet
-
 }
 
 func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
@@ -127,27 +173,56 @@ func checkForFlush(suitMap map[string]Cards) (bool, Cards) {
 	return false, Cards{}
 }
 
-func checkForQuads(cards Cards) (bool, Cards) {
-	//Next - four of a kind
+func getNumHighCards(cards Cards, highCardsNeeded int) Cards {
+
+	var foundCards Cards
+
+	for i := 0; i < highCardsNeeded; i++ {
+		foundHighCard, highCard := checkHighestCardForQuantity(cards, 1)
+
+		if foundHighCard {
+			foundCards = append(foundCards, highCard[0])
+		} else {
+			fmt.Println("oof somethings broken")
+		}
+		cards.Remove(highCard)
+
+	}
+
+	return foundCards
+}
+
+func checkHighestCardForQuantity(cards Cards, cardsNeeded int) (bool, Cards) {
 	numMap := cards.getCardValues()
 
-	var fourOfAKindCards Cards
+	var highCard string
+	for _, value := range orderOfHighest {
 
-	for key, value := range numMap {
-		if value == 4 {
+		if numMap[value] >= cardsNeeded {
+			highCard = value
+			break
+		}
+	}
 
-			for _, curCard := range cards {
+	if highCard == "" {
+		return false, Cards{}
+	}
 
-				if curCard.Value == key {
-					fourOfAKindCards = append(fourOfAKindCards, curCard)
-				}
+	var foundCards Cards
 
+	for _, curCard := range cards {
+		if curCard.Value == highCard {
+
+			foundCards = append(foundCards, curCard)
+
+			if len(foundCards) == cardsNeeded {
+				break
 			}
-			return true, fourOfAKindCards
 
 		}
 	}
-	return false, fourOfAKindCards
+
+	return true, foundCards
 }
 
 func getSuitToCardsMap(cards Cards) map[string]Cards {
@@ -240,20 +315,8 @@ func (c Cards) getNumberValues() ([]int, error) {
 		}
 		values = append(values, curVal)
 	}
-	/*
-		for _, value := range values {
-			fmt.Println(strconv.Itoa(value))
-		}
-	*/
+
 	sort.Sort(sort.Reverse(sort.IntSlice(values)))
-
-	/*
-		fmt.Println("they've been sorted")
-
-		for _, value := range values {
-			fmt.Println(strconv.Itoa(value))
-		}
-	*/
 
 	return values, nil
 }
@@ -296,40 +359,3 @@ func checkForFiveInARow(cards Cards) (bool, Cards) {
 
 	return false, Cards{}
 }
-
-/*
-//returns true and highest card if straight present, false if not
-func checkForStraight(c Cards) (bool, Card) {
-
-	//I'M GOING TO DO AN INEFFICIENT IMPLEMENTATION FIRST
-
-	//get numbers in the
-
-
-	//
-
-	//A - 1
-	//2 - 2
-	//..
-	//T - 10
-	//J - 11
-	//Q - 12
-	//K - 13
-	//A - 14
-
-
-
-}
-*/
-
-//check straight flush - return highest card if yes, none if no
-//check quads - return card if yes, none if no
-//check full house - return cards that are in full house - the one of three and one of two
-//check flush - return all cards in flush (to potentially compare lower cards to others)
-//check straight - return highest card in straight
-//check three of a kind - return card val in 3 of a kind, also return two kickers
-//check two pair - return two card values and kicker value
-//check pair - return card value and three kickers
-//check high card - return 5 highest card values
-
-//func EvaluatePreflop()
