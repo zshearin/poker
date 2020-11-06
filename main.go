@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/zshearin/poker-go/poker"
 )
 
@@ -10,33 +8,10 @@ func main() {
 	deck := getShuffledDeck()
 
 	game1 := deck.GetGame(5)
-	game1.PrintBoard()
-	game1.PrintHands()
+	game1.PrintBoardAndHands()
 
-	//	game1.PrintEvalCards()
-	for _, value := range game1.CardsForEval {
+	game1.PrintBestFive()
 
-		printBestFive(value)
-	}
-
-	/*
-		cards := getCardsToEvaluate()
-
-		printBestFive(cards)
-	*/
-}
-
-func printBestFive(cards poker.Cards) {
-
-	bestFiveCards := cards.Evaluate()
-	for _, card := range bestFiveCards {
-		val := card.Value
-		if card.Value == "1" {
-			val = "A"
-		}
-		fmt.Printf(val + card.Suit + " ")
-	}
-	fmt.Printf("\n\n")
 }
 
 //function implemented for testing - should create unit tests instead

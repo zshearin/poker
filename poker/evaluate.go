@@ -14,9 +14,9 @@ func init() {
 
 }
 
-//Evaluate evaluates the hand and prints out what it is
+//GetFiveBest evaluates the hand and prints out what it is
 // For now I'm going to print out what it is but later should return something
-func (c *Cards) Evaluate() Cards {
+func (c *Cards) GetFiveBest(printValue bool) Cards {
 
 	sort.Sort(ByNumber(*c))
 
@@ -28,7 +28,9 @@ func (c *Cards) Evaluate() Cards {
 	//Check straight flush
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
-		fmt.Println("straight flush")
+		if printValue {
+			fmt.Println("straight flush")
+		}
 		return straightFlushCards
 	}
 
@@ -37,7 +39,10 @@ func (c *Cards) Evaluate() Cards {
 
 	if isQuads {
 
-		fmt.Println("quads")
+		if printValue {
+			fmt.Println("quads")
+		}
+
 		cards.Remove(cardsFound)
 		highCards := getNumHighCards(cards, 1)
 		cards.Add(cardsFound)
@@ -57,7 +62,9 @@ func (c *Cards) Evaluate() Cards {
 		cards.Add(foundCards)
 
 		if isPair {
-			fmt.Println("full house")
+			if printValue {
+				fmt.Println("full house")
+			}
 			foundCards = append(foundCards, foundPair...)
 			return foundCards
 		}
@@ -67,7 +74,9 @@ func (c *Cards) Evaluate() Cards {
 	//Check flush
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
-		fmt.Println("flush - suit is: " + flushCards[0].Suit)
+		if printValue {
+			fmt.Println("flush - suit is: " + flushCards[0].Suit)
+		}
 		return flushCards
 
 	}
@@ -78,14 +87,18 @@ func (c *Cards) Evaluate() Cards {
 	//Check straight
 	isStraight, straightCards := checkForFiveInARow(cards)
 	if isStraight {
-		fmt.Println("is straight: ")
+		if printValue {
+			fmt.Println("straight")
+		}
 		return straightCards
 	}
 
 	//TODO - ADD PROCESSING THREE OF A KIND
 	isThreeOfAKind, foundCards = checkHighestCardForQuantity(cards, 3)
 	if isThreeOfAKind {
-		fmt.Println("three of a kind")
+		if printValue {
+			fmt.Println("three of a kind")
+		}
 
 		cards.Remove(foundCards)
 
@@ -106,7 +119,10 @@ func (c *Cards) Evaluate() Cards {
 		isTwoPair, secondPair := checkHighestCardForQuantity(cards, 2)
 
 		if isTwoPair {
-			fmt.Println("two pair")
+			if printValue {
+				fmt.Println("two pair")
+			}
+
 			cards.Remove(secondPair)
 			foundCards = append(foundCards, secondPair...)
 
@@ -118,7 +134,9 @@ func (c *Cards) Evaluate() Cards {
 			return foundCards
 		}
 
-		fmt.Println("pair")
+		if printValue {
+			fmt.Println("pair")
+		}
 		highCards := getNumHighCards(cards, 3)
 
 		cards.Remove(highCards)
@@ -130,7 +148,9 @@ func (c *Cards) Evaluate() Cards {
 	}
 
 	//just a high card:
-	fmt.Println("high cards")
+	if printValue {
+		fmt.Println("high cards")
+	}
 	highCards := getNumHighCards(cards, 5)
 
 	return highCards

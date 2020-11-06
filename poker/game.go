@@ -2,7 +2,6 @@ package poker
 
 import (
 	"fmt"
-	"strconv"
 )
 
 //Game is the cards for the flop, turn, river and hands dealt to each player
@@ -11,7 +10,13 @@ type Game struct {
 	Flop         Cards
 	Turn         Cards
 	River        Cards
-	CardsForEval []Cards
+	BestFiveList []Cards
+}
+
+//PrintBoardAndHands prints the board and the hands
+func (g *Game) PrintBoardAndHands() {
+	g.PrintBoard()
+	g.PrintHands()
 }
 
 //PrintBoard prints the board for a game
@@ -39,16 +44,26 @@ func (g *Game) PrintHands() {
 	g.Hands.Print()
 }
 
-//PrintEvalCards prints the all the cards to be evaluated for a hand
-func (g *Game) PrintEvalCards() {
-	for i, cardsForEval := range g.CardsForEval {
-		fmt.Printf("Hand " + strconv.Itoa(i+1) + ": ")
-
-		for _, val := range cardsForEval {
-			fmt.Printf(val.Value + val.Suit + " ")
-		}
-		fmt.Printf("\n")
+//PrintBestFive prints the all the cards to be evaluated for a hand
+func (g *Game) PrintBestFive() {
+	for _, val := range g.BestFiveList {
+		printBestFive(val)
 	}
+
+}
+
+func printBestFive(cards Cards) {
+
+	bestFiveCards := cards.GetFiveBest(true)
+
+	for _, card := range bestFiveCards {
+		val := card.Value
+		if card.Value == "1" {
+			val = "A"
+		}
+		fmt.Printf(val + card.Suit + " ")
+	}
+	fmt.Printf("\n\n")
 }
 
 //GetGame deals hands and returns a game object
@@ -59,7 +74,7 @@ func (d *Deck) GetGame(players int) Game {
 	turn := d.GetTurn()
 	river := d.GetRiver()
 
-	var evalCards []Cards
+	var bestFiveCardsList []Cards
 
 	for _, curCards := range hands {
 
@@ -70,7 +85,9 @@ func (d *Deck) GetGame(players int) Game {
 		curCardList = append(curCardList, turn...)
 		curCardList = append(curCardList, river...)
 
-		evalCards = append(evalCards, curCardList)
+		bestFiveCards := curCardList.GetFiveBest(false)
+
+		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
 	}
 
 	game := Game{
@@ -78,7 +95,7 @@ func (d *Deck) GetGame(players int) Game {
 		Flop:         flop,
 		Turn:         turn,
 		River:        river,
-		CardsForEval: evalCards,
+		BestFiveList: bestFiveCardsList,
 	}
 	return game
 }
