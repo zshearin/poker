@@ -1,3 +1,4 @@
 # poker-go
+This creates a poker game and evaluates what each hand is
 
-Right now this shuffles a deck, deals out hands, gets flop turn and river, and evaluates some hands (straight, flush and straight-flush)
+TODO: add comparison of hands to see which one is better
