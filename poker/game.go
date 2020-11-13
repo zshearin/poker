@@ -54,7 +54,7 @@ func (g *Game) PrintBestFive() {
 
 func printBestFive(cards Cards) {
 
-	bestFiveCards := cards.GetFiveBest(true)
+	bestFiveCards, _ := cards.GetFiveBest(true)
 
 	for _, card := range bestFiveCards {
 		val := card.Value
@@ -85,7 +85,7 @@ func (d *Deck) GetGame(players int) Game {
 		curCardList = append(curCardList, turn...)
 		curCardList = append(curCardList, river...)
 
-		bestFiveCards := curCardList.GetFiveBest(false)
+		bestFiveCards, _ := curCardList.GetFiveBest(false)
 
 		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
 	}
