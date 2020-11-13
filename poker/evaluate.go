@@ -16,7 +16,7 @@ func init() {
 
 //GetFiveBest evaluates the hand and prints out what it is
 // For now I'm going to print out what it is but later should return something
-func (c *Cards) GetFiveBest(printValue bool) Cards {
+func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
 
 	sort.Sort(ByNumber(*c))
 
@@ -31,7 +31,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 		if printValue {
 			fmt.Println("straight flush")
 		}
-		return straightFlushCards
+		return straightFlushCards, 1
 	}
 
 	//Check quads
@@ -48,7 +48,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 		cards.Add(cardsFound)
 		cardsFound = append(cardsFound, highCards...)
 
-		return cardsFound
+		return cardsFound, 2
 	}
 
 	//Check full house
@@ -66,7 +66,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 				fmt.Println("full house")
 			}
 			foundCards = append(foundCards, foundPair...)
-			return foundCards
+			return foundCards, 3
 		}
 
 	}
@@ -77,7 +77,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 		if printValue {
 			fmt.Println("flush - suit is: " + flushCards[0].Suit)
 		}
-		return flushCards
+		return flushCards, 4
 
 	}
 
@@ -90,7 +90,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 		if printValue {
 			fmt.Println("straight")
 		}
-		return straightCards
+		return straightCards, 5
 	}
 
 	//TODO - ADD PROCESSING THREE OF A KIND
@@ -107,7 +107,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 
 		foundCards = append(foundCards, twoHighCards...)
 
-		return foundCards
+		return foundCards, 6
 
 	}
 
@@ -131,7 +131,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 			foundCards = append(foundCards, highCards...)
 
 			cards.Add(foundCards)
-			return foundCards
+			return foundCards, 7
 		}
 
 		if printValue {
@@ -143,7 +143,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 		foundCards = append(foundCards, highCards...)
 
 		cards.Add(foundCards)
-		return foundCards
+		return foundCards, 8
 
 	}
 
@@ -153,7 +153,7 @@ func (c *Cards) GetFiveBest(printValue bool) Cards {
 	}
 	highCards := getNumHighCards(cards, 5)
 
-	return highCards
+	return highCards, 9
 }
 
 //Add adds cards to a Cards object.  This is intended to be used for failed multistep checks (fullhouse, two pair)

@@ -5,23 +5,6 @@ import (
 	"testing"
 )
 
-func TestCards_Evaluate(t *testing.T) {
-	tests := []struct {
-		name string
-		c    *Cards
-		want Cards
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := tt.c.Evaluate(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("Cards.Evaluate() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 //Straight flush edge case:
 /*
 	cards := poker.Cards{
@@ -184,3 +167,29 @@ func TestCards_Evaluate(t *testing.T) {
 	}
 
 */
+
+func TestCards_GetFiveBest(t *testing.T) {
+	type args struct {
+		printValue bool
+	}
+	tests := []struct {
+		name  string
+		c     *Cards
+		args  args
+		want  Cards
+		want1 int
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, got1 := tt.c.GetFiveBest(tt.args.printValue)
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("Cards.GetFiveBest() got = %v, want %v", got, tt.want)
+			}
+			if got1 != tt.want1 {
+				t.Errorf("Cards.GetFiveBest() got1 = %v, want %v", got1, tt.want1)
+			}
+		})
+	}
+}
