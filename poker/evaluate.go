@@ -9,8 +9,8 @@ import (
 var orderOfHighest []string
 
 func init() {
-
-	orderOfHighest = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
+	//Ace represented twice - A for high ace and 1 for low ace
+	orderOfHighest = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1"}
 
 }
 
@@ -348,11 +348,10 @@ func checkForFiveInARow(cards Cards) (bool, Cards) {
 	var fiveInARow Cards
 
 	//add value for 1 for an ace (to check for low straight - ace can be high or low)
-	if cards[0].Number == 14 {
+	if cards[0].Value == "A" {
 		newCard := Card{
-			Suit:   cards[0].Suit,
-			Value:  "1",
-			Number: 1,
+			Suit:  cards[0].Suit,
+			Value: "1",
 		}
 		cards = append(cards, newCard)
 	}
