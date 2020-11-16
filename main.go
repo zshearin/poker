@@ -17,80 +17,11 @@ func main() {
 //function implemented for testing - should create unit tests instead
 func getCardsToEvaluate() poker.Cards {
 	cards := poker.Cards{
-		/*
-			poker.Card{
-				Suit:   "S",
-				Value:  "5",
-				Number: 5,
-			},
-		*/
-		poker.Card{
-			Suit:   "H",
-			Value:  "J",
-			Number: 11,
-		},
-		poker.Card{
-			Suit:   "D",
-			Value:  "6",
-			Number: 6,
-		},
-		/*
-			poker.Card{
-				Suit:   "C",
-				Value:  "6",
-				Number: 6,
-			},
-		*/
-		/*
-			poker.Card{
-				Suit:   "C",
-				Value:  "4",
-				Number: 4,
-			},
-		*/
-		/*
-			poker.Card{
-				Suit:   "S",
-				Value:  "3",
-				Number: 3,
-			},
-			poker.Card{
-				Suit:   "H",
-				Value:  "3",
-				Number: 3,
-			},
-		*/
-
-		poker.Card{
-			Suit:   "D",
-			Value:  "5",
-			Number: 5,
-		},
-		/*
-			poker.Card{
-				Suit:   "D",
-				Value:  "A",
-				Number: 14,
-			},
-		*/
-		poker.Card{
-			Suit:   "H",
-			Value:  "K",
-			Number: 13,
-		},
-		poker.Card{
-			Suit:   "D",
-			Value:  "A",
-			Number: 14,
-		},
-
-		/*
-			Card{
-				Suit:   "H",
-				Value:  "5",
-				Number: 5,
-			},
-		*/
+		poker.Card{Value: "J", Suit: "H"},
+		poker.Card{Value: "6", Suit: "D"},
+		poker.Card{Value: "5", Suit: "D"},
+		poker.Card{Value: "K", Suit: "H"},
+		poker.Card{Value: "A", Suit: "D"},
 	}
 	return cards
 }
@@ -104,7 +35,3 @@ func getShuffledDeck() poker.Deck {
 	//	deck.PrintOrder()
 	return deck
 }
-
-/*
-
- */

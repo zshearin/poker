@@ -7,19 +7,19 @@ import (
 func Test_compareStraightFlushes(t *testing.T) {
 
 	cards1 := Cards{
-		Card{Suit: "C", Value: "4", Number: 4},
-		Card{Suit: "C", Value: "5", Number: 5},
-		Card{Suit: "C", Value: "6", Number: 6},
-		Card{Suit: "C", Value: "7", Number: 7},
-		Card{Suit: "C", Value: "8", Number: 8},
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "C", Value: "6"},
+		Card{Suit: "C", Value: "7"},
+		Card{Suit: "C", Value: "8"},
 	}
 
 	cards2 := Cards{
-		Card{Suit: "C", Value: "5", Number: 5},
-		Card{Suit: "C", Value: "6", Number: 6},
-		Card{Suit: "C", Value: "7", Number: 7},
-		Card{Suit: "C", Value: "8", Number: 8},
-		Card{Suit: "C", Value: "9", Number: 9},
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "C", Value: "6"},
+		Card{Suit: "C", Value: "7"},
+		Card{Suit: "C", Value: "8"},
+		Card{Suit: "C", Value: "9"},
 	}
 
 	type args struct {
