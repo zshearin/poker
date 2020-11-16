@@ -32,6 +32,6 @@ func getShuffledDeck() poker.Deck {
 	//	deck.PrintOrder()
 	deck.Shuffle()
 	deck.Shuffle()
-	//	deck.PrintOrder()
+	deck.PrintOrder()
 	return deck
 }

@@ -2,6 +2,7 @@ package poker
 
 import (
 	"errors"
+	"fmt"
 	"sort"
 )
 
@@ -55,20 +56,40 @@ func compareStraightFlushes(firstFive Cards, secondFive Cards) int {
 
 	sort.Sort(ByNumber(secondFive))
 
-	return compareCard(firstFive[0], secondFive[0])
+	//using index 1 because its the simple fix for the low straight case
+	//the sort will treat ace as high (will likely do something similar for straight as well)
+	return compareCard(firstFive[1], secondFive[1])
 }
 
-func compareQuads(firstFive Cards, secondFive Cards) {
+func compareQuads(firstFive Cards, secondFive Cards) int {
 	//TODO:
 
-	//if both quads:
-	//check if one's quads are higher than the other
-	//if one higher, return that one as better
+	isQuadsFirst, quads1 := checkHighestCardForQuantity(firstFive, 4)
+	isQuadsSecond, quads2 := checkHighestCardForQuantity(secondFive, 4)
 
-	//if same, check high card
-	//if one has higher high card, return that one as better
+	if !isQuadsFirst || !isQuadsSecond {
+		fmt.Println("quad comparison called when one or both were not quads")
+	}
 
-	//else return -1
+	val1 := quads1[0]
+	val2 := quads2[0]
+
+	result := compareCard(val1, val2)
+
+	//if result is not 0, then one of the two quads is higher
+	if result != 0 {
+		return result
+	}
+
+	//remove the quads from both hands and get the high card remaining value
+	firstFive.Remove(quads1)
+	secondFive.Remove(quads2)
+	_, highCard1 := checkHighestCardForQuantity(firstFive, 1)
+	_, highCard2 := checkHighestCardForQuantity(secondFive, 1)
+	result2 := compareCard(highCard1[0], highCard2[0])
+	firstFive.Add(quads1)
+	secondFive.Add(quads2)
+	return result2
 
 }
 
@@ -77,7 +98,7 @@ func compareQuads(firstFive Cards, secondFive Cards) {
 //and 0 if they appear in the same spot as this list
 func compareCard(card1 Card, card2 Card) int {
 
-	//orderOfHighest = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"}
+	//orderOfHighest = []string{"A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2", "1"}
 
 	var index1, index2 int
 
