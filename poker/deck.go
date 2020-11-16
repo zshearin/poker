@@ -30,7 +30,7 @@ func GetDeck() Deck {
 	var deck Deck
 
 	for _, suit := range suits {
-		for index, value := range values {
+		for _, value := range values {
 			currentCard := Card{
 				Suit:  suit,
 				Value: value,

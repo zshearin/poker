@@ -312,27 +312,11 @@ func (c Cards) getCardValues() map[string]int {
 func (c Cards) getNumberValues() ([]int, error) {
 
 	var values []int
-	var err error
 
 	for _, card := range c {
 		var curVal int
 
-		if card.Value == "T" {
-			curVal = 10
-		} else if card.Value == "J" {
-			curVal = 11
-		} else if card.Value == "Q" {
-			curVal = 12
-		} else if card.Value == "K" {
-			curVal = 13
-		} else if card.Value == "A" {
-			curVal = 14
-		} else {
-			curVal, err = strconv.Atoi(card.Value)
-			if err != nil {
-				return values, err
-			}
-		}
+		curVal = getNumberValue(card)
 		values = append(values, curVal)
 	}
 
@@ -341,12 +325,34 @@ func (c Cards) getNumberValues() ([]int, error) {
 	return values, nil
 }
 
+func getNumberValue(card Card) int {
+	var curVal int
+	var err error
+	if card.Value == "T" {
+		curVal = 10
+	} else if card.Value == "J" {
+		curVal = 11
+	} else if card.Value == "Q" {
+		curVal = 12
+	} else if card.Value == "K" {
+		curVal = 13
+	} else if card.Value == "A" {
+		curVal = 14
+	} else {
+		curVal, err = strconv.Atoi(card.Value)
+		if err != nil {
+			fmt.Println("error converting card to number value: " + card.Value + card.Suit + ".  Error: " + err.Error())
+		}
+	}
+	return curVal
+}
+
 //if 5 in a row, returns true and the number
 //if not, returns false and 0
 func checkForFiveInARow(cards Cards) (bool, Cards) {
 
 	var fiveInARow Cards
-
+	sort.Sort(ByNumber(cards))
 	//add value for 1 for an ace (to check for low straight - ace can be high or low)
 	if cards[0].Value == "A" {
 		newCard := Card{
@@ -359,12 +365,15 @@ func checkForFiveInARow(cards Cards) (bool, Cards) {
 	fiveInARow = append(fiveInARow, cards[0])
 
 	for i := 0; i < len(cards)-1; i++ {
+		card1 := getNumberValue(cards[i])
+		card2 := getNumberValue(cards[i+1])
+
 		//if sequential values are 1 apart, add card to array
-		if cards[i].Number-1 == cards[i+1].Number {
+		if card1-1 == card2 {
 			fiveInARow = append(fiveInARow, cards[i+1])
 
 			//if values are the same, don't add but also dont reset
-		} else if cards[i].Number == cards[i+1].Number {
+		} else if card1 == card2 {
 			continue
 		} else {
 			//reset to next value
@@ -372,6 +381,7 @@ func checkForFiveInARow(cards Cards) (bool, Cards) {
 			fiveInARow = append(fiveInARow, cards[i+1])
 		}
 		if len(fiveInARow) == 5 {
+
 			return true, fiveInARow
 		}
 	}
