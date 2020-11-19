@@ -27,7 +27,6 @@ func init() {
 //GetFiveBest evaluates the hand and prints out what it is
 //First return param: the 5 best cards
 //Second return param: the ranking of the 5 best cards.  Rankings can be found above
-// For now I'm going to print out what it is but later should return something
 func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
 
 	sort.Sort(ByNumber(*c))
