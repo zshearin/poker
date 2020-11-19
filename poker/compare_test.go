@@ -158,3 +158,68 @@ func Test_compareFullHouses(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareFlushes(t *testing.T) {
+	cards1 := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "C", Value: "A"},
+		Card{Suit: "C", Value: "7"},
+		Card{Suit: "C", Value: "8"},
+	}
+
+	cards2 := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "C", Value: "6"},
+		Card{Suit: "C", Value: "7"},
+		Card{Suit: "C", Value: "8"},
+		Card{Suit: "C", Value: "9"},
+	}
+
+	cards3 := Cards{
+		Card{Suit: "C", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "C", Value: "6"},
+	}
+	cards4 := Cards{
+		Card{Suit: "C", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "C", Value: "6"},
+	}
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"test first card in flush is higher first one", args{firstFive: cards1, secondFive: cards2}, 1},
+		{"test first card in flush is higher second one", args{firstFive: cards2, secondFive: cards1}, 2},
+
+		{"test second card in flush is higher first one", args{firstFive: cards3, secondFive: cards1}, 1},
+		{"test second card in flush is higher second one", args{firstFive: cards1, secondFive: cards3}, 2},
+
+		{"test last card in first flush is higher - rest same", args{firstFive: cards3, secondFive: cards4}, 1},
+		{"test last card in second flush is higher - rest same", args{firstFive: cards4, secondFive: cards3}, 2},
+
+		{"test same flush 1", args{firstFive: cards1, secondFive: cards1}, 0},
+		{"test same flush 2", args{firstFive: cards2, secondFive: cards2}, 0},
+		{"test same flush 3", args{firstFive: cards3, secondFive: cards3}, 0},
+		{"test same flush 4", args{firstFive: cards4, secondFive: cards4}, 0},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareFlushes(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareFlushes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

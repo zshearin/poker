@@ -14,7 +14,19 @@ func init() {
 
 }
 
+//straight flush  - 1
+//quads           - 2
+//full house      - 3
+//flush           - 4
+//straight        - 5
+//three of a kind - 6
+//two pair        - 7
+//pair            - 8
+//high card       - 9
+
 //GetFiveBest evaluates the hand and prints out what it is
+//First return param: the 5 best cards
+//Second return param: the ranking of the 5 best cards.  Rankings can be found above
 // For now I'm going to print out what it is but later should return something
 func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
 
