@@ -58,7 +58,8 @@ func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
 		cards.Remove(foundCards)
 
 		isPair, foundPair := checkHighestCardForQuantity(cards, 2)
-		//not a full house, add back 3 of a kind for later eval
+
+		//if not a full house, add back 3 of a kind for later eval
 		cards.Add(foundCards)
 
 		if isPair {

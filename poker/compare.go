@@ -62,7 +62,6 @@ func compareStraightFlushes(firstFive Cards, secondFive Cards) int {
 }
 
 func compareQuads(firstFive Cards, secondFive Cards) int {
-	//TODO:
 
 	isQuadsFirst, quads1 := checkHighestCardForQuantity(firstFive, 4)
 	isQuadsSecond, quads2 := checkHighestCardForQuantity(secondFive, 4)
@@ -90,6 +89,44 @@ func compareQuads(firstFive Cards, secondFive Cards) int {
 	firstFive.Add(quads1)
 	secondFive.Add(quads2)
 	return result2
+
+}
+
+func compareFullHouses(firstFive, secondFive Cards) int {
+	isThreeOfAKind1, threeOfAKind1 := checkHighestCardForQuantity(firstFive, 3)
+	isThreeOfAKind2, threeOfAKind2 := checkHighestCardForQuantity(secondFive, 3)
+
+	if !isThreeOfAKind1 || !isThreeOfAKind2 {
+		fmt.Println("error - function returned full house but three of one card not found in input")
+		return -1
+	}
+
+	//remove for pair eval
+	firstFive.Remove(threeOfAKind1)
+	secondFive.Remove(threeOfAKind2)
+
+	isPair1, pair1 := checkHighestCardForQuantity(firstFive, 2)
+	isPair2, pair2 := checkHighestCardForQuantity(secondFive, 2)
+
+	//add back
+	firstFive.Add(threeOfAKind1)
+	secondFive.Add(threeOfAKind2)
+
+	if !isPair1 || !isPair2 {
+		fmt.Println("error - function returned full house but pair not found to compelete full house")
+		return -1
+	}
+
+	//check if one has higher three of a kind
+	threeOfAKindResult := compareCard(threeOfAKind1[0], threeOfAKind2[0])
+	if threeOfAKindResult != 0 {
+		return threeOfAKindResult
+	}
+
+	//check if one has higher pair if three of a kind equal (return result no matter what
+	//because if it's zero, the pairs are the same and the hands are equal)
+	pairResult := compareCard(pair1[0], pair2[0])
+	return pairResult
 
 }
 
