@@ -72,7 +72,7 @@ func (n ByNumber) Less(i, j int) bool {
 
 func (n ByNumber) Swap(i, j int) { n[i], n[j] = n[j], n[i] }
 
-//Sort highest to lowest based on "number"
+//Sort highest to lowest based on Value param
 func (c *Cards) Sort() {
 
 }

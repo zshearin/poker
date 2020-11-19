@@ -31,7 +31,9 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 	} else if rank1 == 2 {
 		compareQuads(firstFive, secondFive)
 	} else if rank1 == 3 {
-
+		compareFullHouses(firstFive, secondFive)
+	} else if rank1 == 4 {
+		compareFlushes(firstFive, secondFive)
 	}
 
 	//check first for straight flush:
@@ -128,6 +130,25 @@ func compareFullHouses(firstFive, secondFive Cards) int {
 	pairResult := compareCard(pair1[0], pair2[0])
 	return pairResult
 
+}
+
+func compareFlushes(firstFive, secondFive Cards) int {
+
+	firstFive.Sort()
+	secondFive.Sort()
+	sort.Sort(ByNumber(firstFive))
+	sort.Sort(ByNumber(secondFive))
+
+	for i := range firstFive {
+
+		result := compareCard((firstFive)[i], (secondFive)[i])
+		if result != 0 {
+			//Debugging with unit tests if desired:
+			//fmt.Println("index: " + strconv.Itoa(i) + ", card1: " + (firstFive)[i].Value + ", card2: " + (secondFive)[i].Value)
+			return result
+		}
+	}
+	return 0
 }
 
 //compareCard iterates through the orderOfHighest list
