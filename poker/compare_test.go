@@ -106,3 +106,55 @@ func Test_compareQuads(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareFullHouses(t *testing.T) {
+
+	cards1 := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "S", Value: "4"},
+		Card{Suit: "D", Value: "4"},
+		Card{Suit: "H", Value: "5"},
+		Card{Suit: "C", Value: "5"},
+	}
+	cards2 := Cards{
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "S", Value: "5"},
+		Card{Suit: "D", Value: "6"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+	cards3 := Cards{
+		Card{Suit: "C", Value: "8"},
+		Card{Suit: "S", Value: "8"},
+		Card{Suit: "D", Value: "6"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{"test same exact hand ", args{firstFive: cards1, secondFive: cards1}, 0},
+		{"test same pair, higher trips on first", args{firstFive: cards2, secondFive: cards1}, 1},
+		{"test same pair, higher trips on second", args{firstFive: cards1, secondFive: cards2}, 2},
+		{"test same trips, higher pair on first", args{firstFive: cards3, secondFive: cards2}, 1},
+		{"test same trips, higher pair on second", args{firstFive: cards2, secondFive: cards3}, 2},
+		{"test higher trips and higher pair on first", args{firstFive: cards3, secondFive: cards1}, 1},
+		{"test higher trips and higher pair on second", args{firstFive: cards1, secondFive: cards3}, 2},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareFullHouses(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareFullHouses() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
