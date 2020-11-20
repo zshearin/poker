@@ -125,8 +125,6 @@ func compareFullHouses(firstFive, secondFive Cards) int {
 
 func compareFlushes(firstFive, secondFive Cards) int {
 
-	firstFive.Sort()
-	secondFive.Sort()
 	sort.Sort(ByNumber(firstFive))
 	sort.Sort(ByNumber(secondFive))
 
@@ -227,42 +225,21 @@ func comparePair(firstFive, secondFive Cards) int {
 	firstFive.Remove(pair1)
 	secondFive.Remove(pair2)
 
-	//then first high card
-	firstHighCard1, firstHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
-	if err != nil {
-		return -1
-	}
-	firstFive.Remove(firstHighCard1)
-	secondFive.Remove(firstHighCard2)
-
-	//then second high card
-	secondHighCard1, secondHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
-	if err != nil {
-		return -1
-	}
-	firstFive.Remove(secondHighCard1)
-	secondFive.Remove(secondHighCard2)
-
-	//then third high card
-	thirdHighCard1, thirdHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
-	if err != nil {
-		return -1
+	result := compareCard(pair1[0], pair2[0])
+	if result != 0 {
+		firstFive.Add(pair1)
+		secondFive.Add(pair2)
+		return result
 	}
 
-	//Add cards back that were removed
+	sort.Sort(ByNumber(firstFive))
+	sort.Sort(ByNumber(secondFive))
+
+	result1 := compareCards(firstFive, secondFive)
 	firstFive.Add(pair1)
 	secondFive.Add(pair2)
-	firstFive.Add(firstHighCard1)
-	secondFive.Add(firstHighCard2)
-	firstFive.Add(secondHighCard1)
-	secondFive.Add(secondHighCard2)
+	return result1
 
-	//Make list of cards to compare
-	var firstEvalOrder, secondEvalOrder Cards
-	firstEvalOrder = append(firstEvalOrder, pair1[0], firstHighCard1[0], secondHighCard1[0], thirdHighCard1[0])
-	secondEvalOrder = append(secondEvalOrder, pair2[0], firstHighCard2[0], secondHighCard2[0], thirdHighCard2[0])
-
-	return compareCards(firstEvalOrder, secondEvalOrder)
 }
 
 //compareCards takes two lists of equal length cards and compares each index
