@@ -70,42 +70,35 @@ func compareStraight(firstFive Cards, secondFive Cards) int {
 }
 
 func compareQuads(firstFive Cards, secondFive Cards) int {
-
-	isQuadsFirst, quads1 := checkHighestCardForQuantity(firstFive, 4)
-	isQuadsSecond, quads2 := checkHighestCardForQuantity(secondFive, 4)
-
-	if !isQuadsFirst || !isQuadsSecond {
-		fmt.Println("quad comparison called when one or both were not quads")
-	}
-
-	val1 := quads1[0]
-	val2 := quads2[0]
-
-	result := compareCard(val1, val2)
-
-	//if result is not 0, then one of the two quads is higher
-	if result != 0 {
-		return result
+	quads1, quads2, err := getHighestCardsForQuantity(firstFive, secondFive, 4)
+	if err != nil {
+		return -1
 	}
 
 	//remove the quads from both hands and get the high card remaining value
 	firstFive.Remove(quads1)
 	secondFive.Remove(quads2)
-	_, highCard1 := checkHighestCardForQuantity(firstFive, 1)
-	_, highCard2 := checkHighestCardForQuantity(secondFive, 1)
-	result2 := compareCard(highCard1[0], highCard2[0])
+
+	highCard1, highCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
+	if err != nil {
+		return -1
+	}
+	//Add back quads
 	firstFive.Add(quads1)
 	secondFive.Add(quads2)
-	return result2
+
+	//Make list of cards to compare
+	var firstEvalOrder, secondEvalOrder Cards
+	firstEvalOrder = append(firstEvalOrder, quads1[0], highCard1[0])
+	secondEvalOrder = append(secondEvalOrder, quads2[0], highCard2[0])
+
+	return compareCards(firstEvalOrder, secondEvalOrder)
 
 }
 
 func compareFullHouses(firstFive, secondFive Cards) int {
-	isThreeOfAKind1, threeOfAKind1 := checkHighestCardForQuantity(firstFive, 3)
-	isThreeOfAKind2, threeOfAKind2 := checkHighestCardForQuantity(secondFive, 3)
-
-	if !isThreeOfAKind1 || !isThreeOfAKind2 {
-		fmt.Println("error - function returned full house but three of one card not found in input")
+	threeOfAKind1, threeOfAKind2, err := getHighestCardsForQuantity(firstFive, secondFive, 3)
+	if err != nil {
 		return -1
 	}
 
@@ -113,29 +106,21 @@ func compareFullHouses(firstFive, secondFive Cards) int {
 	firstFive.Remove(threeOfAKind1)
 	secondFive.Remove(threeOfAKind2)
 
-	isPair1, pair1 := checkHighestCardForQuantity(firstFive, 2)
-	isPair2, pair2 := checkHighestCardForQuantity(secondFive, 2)
+	pair1, pair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
+	if err != nil {
+		return -1
+	}
 
 	//add back
 	firstFive.Add(threeOfAKind1)
 	secondFive.Add(threeOfAKind2)
 
-	if !isPair1 || !isPair2 {
-		fmt.Println("error - function returned full house but pair not found to compelete full house")
-		return -1
-	}
+	//Make list of cards to compare
+	var firstEvalOrder, secondEvalOrder Cards
+	firstEvalOrder = append(firstEvalOrder, threeOfAKind1[0], pair1[0])
+	secondEvalOrder = append(secondEvalOrder, threeOfAKind2[0], pair2[0])
 
-	//check if one has higher three of a kind
-	threeOfAKindResult := compareCard(threeOfAKind1[0], threeOfAKind2[0])
-	if threeOfAKindResult != 0 {
-		return threeOfAKindResult
-	}
-
-	//check if one has higher pair if three of a kind equal (return result no matter what
-	//because if it's zero, the pairs are the same and the hands are equal)
-	pairResult := compareCard(pair1[0], pair2[0])
-	return pairResult
-
+	return compareCards(firstEvalOrder, secondEvalOrder)
 }
 
 func compareFlushes(firstFive, secondFive Cards) int {
@@ -158,25 +143,26 @@ func compareFlushes(firstFive, secondFive Cards) int {
 }
 
 func compareThreeOfAKind(firstFive, secondFive Cards) int {
-	isThreeOfAKind1, threeOfAKind1 := checkHighestCardForQuantity(firstFive, 3)
-	isThreeOfAKind2, threeOfAKind2 := checkHighestCardForQuantity(secondFive, 3)
-
-	if !isThreeOfAKind1 || !isThreeOfAKind2 {
-		fmt.Println("error - function returned full house but three of one card not found in input")
+	threeOfAKind1, threeOfAKind2, err := getHighestCardsForQuantity(firstFive, secondFive, 3)
+	if err != nil {
 		return -1
 	}
 	//remove three of a kind for high card eval
 	firstFive.Remove(threeOfAKind1)
 	secondFive.Remove(threeOfAKind2)
 
-	_, firstHighCard1 := checkHighestCardForQuantity(firstFive, 1)
-	_, firstHighCard2 := checkHighestCardForQuantity(secondFive, 1)
+	firstHighCard1, firstHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
+	if err != nil {
+		return -1
+	}
 	//remove first high card for second high card eval
 	firstFive.Remove(firstHighCard1)
 	secondFive.Remove(firstHighCard2)
 
-	_, secondHighCard1 := checkHighestCardForQuantity(firstFive, 1)
-	_, secondHighCard2 := checkHighestCardForQuantity(secondFive, 1)
+	secondHighCard1, secondHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
+	if err != nil {
+		return -1
+	}
 
 	//add removed cards back
 	firstFive.Add(firstHighCard1)
@@ -184,20 +170,12 @@ func compareThreeOfAKind(firstFive, secondFive Cards) int {
 	secondFive.Add(firstHighCard2)
 	secondFive.Add(threeOfAKind2)
 
-	//check if one has higher three of a kind
-	threeOfAKindResult := compareCard(threeOfAKind1[0], threeOfAKind2[0])
-	if threeOfAKindResult != 0 {
-		return threeOfAKindResult
-	}
+	//Make list of cards to compare
+	var firstEvalOrder, secondEvalOrder Cards
+	firstEvalOrder = append(firstEvalOrder, threeOfAKind1[0], firstHighCard1[0], secondHighCard1[0])
+	secondEvalOrder = append(secondEvalOrder, threeOfAKind2[0], firstHighCard2[0], secondHighCard2[0])
 
-	//check if one has higher first high card
-	firstHighCardResult := compareCard(firstHighCard1[0], firstHighCard2[0])
-	if firstHighCardResult != 0 {
-		return firstHighCardResult
-	}
-
-	//check if one has higher second high card.  if same, hands are same and return 0
-	return compareCard(secondHighCard1[0], secondHighCard2[0])
+	return compareCards(firstEvalOrder, secondEvalOrder)
 
 }
 
