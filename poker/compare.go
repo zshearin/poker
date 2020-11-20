@@ -50,9 +50,14 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 		return compareThreeOfAKind(firstFive, secondFive), nil
 	} else if rank1 == 7 {
 		return compareTwoPair(firstFive, secondFive), nil
+	} else if rank1 == 8 {
+		return comparePair(firstFive, secondFive), nil
+	} else if rank1 == 9 {
+		return compareHighCards(firstFive, secondFive), nil
 	}
 
-	return 0, nil
+	return -1, errors.New("do not understand input")
+
 }
 
 func compareStraightFlushes(firstFive Cards, secondFive Cards) int {
@@ -145,35 +150,20 @@ func compareThreeOfAKind(firstFive, secondFive Cards) int {
 	if err != nil {
 		return -1
 	}
+
+	result := compareCard(threeOfAKind1[0], threeOfAKind2[0])
+	if result != 0 {
+		return result
+	}
+
 	//remove three of a kind for high card eval
 	firstFive.Remove(threeOfAKind1)
 	secondFive.Remove(threeOfAKind2)
 
-	firstHighCard1, firstHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
-	if err != nil {
-		return -1
-	}
-	//remove first high card for second high card eval
-	firstFive.Remove(firstHighCard1)
-	secondFive.Remove(firstHighCard2)
-
-	secondHighCard1, secondHighCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
-	if err != nil {
-		return -1
-	}
-
-	//add removed cards back
-	firstFive.Add(firstHighCard1)
+	resultHighCards := compareHighCards(firstFive, secondFive)
 	firstFive.Add(threeOfAKind1)
-	secondFive.Add(firstHighCard2)
 	secondFive.Add(threeOfAKind2)
-
-	//Make list of cards to compare
-	var firstEvalOrder, secondEvalOrder Cards
-	firstEvalOrder = append(firstEvalOrder, threeOfAKind1[0], firstHighCard1[0], secondHighCard1[0])
-	secondEvalOrder = append(secondEvalOrder, threeOfAKind2[0], firstHighCard2[0], secondHighCard2[0])
-
-	return compareCards(firstEvalOrder, secondEvalOrder)
+	return resultHighCards
 
 }
 
@@ -233,15 +223,19 @@ func comparePair(firstFive, secondFive Cards) int {
 		return result
 	}
 
-	sort.Sort(ByNumber(firstFive))
-	sort.Sort(ByNumber(secondFive))
-
-	result1 := compareCards(firstFive, secondFive)
+	result1 := compareHighCards(firstFive, secondFive)
 	//add back removed cards
 	firstFive.Add(pair1)
 	secondFive.Add(pair2)
 	return result1
+}
 
+func compareHighCards(firstFive, secondFive Cards) int {
+
+	sort.Sort(ByNumber(firstFive))
+	sort.Sort(ByNumber(secondFive))
+
+	return compareCards(firstFive, secondFive)
 }
 
 //compareCards takes two lists of equal length cards and compares each index
