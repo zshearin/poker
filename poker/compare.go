@@ -6,6 +6,16 @@ import (
 	"sort"
 )
 
+//straight flush  - 1
+//quads           - 2
+//full house      - 3
+//flush           - 4
+//straight        - 5
+//three of a kind - 6
+//two pair        - 7
+//pair            - 8
+//high card       - 9
+
 //CompareTwoBestFive compares two hands
 //returns 1 if first hand best, 2 if second hand best and
 //0 if hands are the same (in evaluation, not necessarily identical)
@@ -29,31 +39,23 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 	if rank1 == 1 {
 		return compareStraightFlushes(firstFive, secondFive), nil
 	} else if rank1 == 2 {
-		compareQuads(firstFive, secondFive)
+		return compareQuads(firstFive, secondFive), nil
 	} else if rank1 == 3 {
-		compareFullHouses(firstFive, secondFive)
+		return compareFullHouses(firstFive, secondFive), nil
 	} else if rank1 == 4 {
-		compareFlushes(firstFive, secondFive)
+		return compareFlushes(firstFive, secondFive), nil
+	} else if rank1 == 5 {
+		return compareStraight(firstFive, secondFive), nil
 	}
-
-	//check first for straight flush:
-
-	//if one straight flush and other not, return that one as better
-
-	//if neither, move on to next eval
-
-	//check for quads
-
-	//if one has and other doesn't, return one as better
-
-	//check for full house:
-
-	//compareFullHouses()
 
 	return 0, nil
 }
 
 func compareStraightFlushes(firstFive Cards, secondFive Cards) int {
+	return compareStraight(firstFive, secondFive)
+}
+
+func compareStraight(firstFive Cards, secondFive Cards) int {
 	sort.Sort(ByNumber(firstFive))
 
 	sort.Sort(ByNumber(secondFive))
