@@ -224,7 +224,9 @@ func getNumHighCards(cards Cards, highCardsNeeded int) Cards {
 	return foundCards
 }
 
+//TODO - MAKE THIS MORE EFFICIENT - MIGHT NOT ACTUALLY THOUGH BECAUSE THE LONGEST "cards" should ever be is 7
 func checkHighestCardForQuantity(cards Cards, cardsNeeded int) (bool, Cards) {
+
 	numMap := cards.getCardValues()
 
 	var highCard string
