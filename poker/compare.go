@@ -163,17 +163,20 @@ func compareThreeOfAKind(firstFive, secondFive Cards) int {
 		fmt.Println("error - function returned full house but three of one card not found in input")
 		return -1
 	}
+	//remove three of a kind for high card eval
 	firstFive.Remove(threeOfAKind1)
 	secondFive.Remove(threeOfAKind2)
 
 	_, firstHighCard1 := checkHighestCardForQuantity(firstFive, 1)
 	_, firstHighCard2 := checkHighestCardForQuantity(secondFive, 1)
+	//remove first high card for second high card eval
 	firstFive.Remove(firstHighCard1)
 	secondFive.Remove(firstHighCard2)
 
 	_, secondHighCard1 := checkHighestCardForQuantity(firstFive, 1)
 	_, secondHighCard2 := checkHighestCardForQuantity(secondFive, 1)
 
+	//add removed cards back
 	firstFive.Add(firstHighCard1)
 	firstFive.Add(threeOfAKind1)
 	secondFive.Add(firstHighCard2)
@@ -185,12 +188,13 @@ func compareThreeOfAKind(firstFive, secondFive Cards) int {
 		return threeOfAKindResult
 	}
 
+	//check if one has higher first high card
 	firstHighCardResult := compareCard(firstHighCard1[0], firstHighCard2[0])
 	if firstHighCardResult != 0 {
 		return firstHighCardResult
 	}
 
-	//if ==0, then hands are same value
+	//check if one has higher second high card.  if same, hands are same and return 0
 	return compareCard(secondHighCard1[0], secondHighCard2[0])
 
 }
@@ -208,7 +212,6 @@ func compareCard(card1 Card, card2 Card) int {
 		if val == card1.Value {
 			index1 = i
 		}
-
 		if val == card2.Value {
 			index2 = i
 		}
