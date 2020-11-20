@@ -309,3 +309,73 @@ func Test_compareStraight(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareThreeOfAKind(t *testing.T) {
+
+	foursAKHigh := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "S", Value: "4"},
+		Card{Suit: "D", Value: "4"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	foursAQHigh := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "S", Value: "4"},
+		Card{Suit: "D", Value: "4"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "Q"},
+	}
+
+	sixesAKHigh := Cards{
+		Card{Suit: "C", Value: "K"},
+		Card{Suit: "S", Value: "A"},
+		Card{Suit: "D", Value: "6"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+	sixesJTHigh := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "T"},
+		Card{Suit: "D", Value: "6"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+
+		//BETTER FIRST HAND
+		{"test higher trips 1 - 1", args{firstFive: sixesJTHigh, secondFive: foursAKHigh}, 1},
+		{"test higher trips 2 - 1", args{firstFive: sixesAKHigh, secondFive: foursAKHigh}, 1},
+		{"same trips, higher first card - 1", args{firstFive: sixesAKHigh, secondFive: sixesJTHigh}, 1},
+		{"same trips, higher second card - 1", args{firstFive: foursAKHigh, secondFive: foursAQHigh}, 1},
+
+		//BETTER SECOND HAND
+		{"test higher trips 1 - 2", args{firstFive: foursAKHigh, secondFive: sixesJTHigh}, 2},
+		{"test higher trips 2 - 2", args{firstFive: foursAKHigh, secondFive: sixesAKHigh}, 2},
+		{"same trips, higher first card - 2", args{firstFive: sixesJTHigh, secondFive: sixesAKHigh}, 2},
+		{"same trips, higher second card - 2", args{firstFive: foursAQHigh, secondFive: foursAKHigh}, 2},
+
+		//SAME VALUE HAND
+		{"same value 1", args{firstFive: foursAKHigh, secondFive: foursAKHigh}, 0},
+		{"same value 2", args{firstFive: foursAQHigh, secondFive: foursAQHigh}, 0},
+		{"same value 3", args{firstFive: sixesAKHigh, secondFive: sixesAKHigh}, 0},
+		{"same value 4", args{firstFive: sixesJTHigh, secondFive: sixesJTHigh}, 0},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareThreeOfAKind(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareThreeOfAKind() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

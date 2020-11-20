@@ -46,6 +46,8 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 		return compareFlushes(firstFive, secondFive), nil
 	} else if rank1 == 5 {
 		return compareStraight(firstFive, secondFive), nil
+	} else if rank1 == 6 {
+		return compareThreeOfAKind(firstFive, secondFive), nil
 	}
 
 	return 0, nil
@@ -151,6 +153,46 @@ func compareFlushes(firstFive, secondFive Cards) int {
 		}
 	}
 	return 0
+}
+
+func compareThreeOfAKind(firstFive, secondFive Cards) int {
+	isThreeOfAKind1, threeOfAKind1 := checkHighestCardForQuantity(firstFive, 3)
+	isThreeOfAKind2, threeOfAKind2 := checkHighestCardForQuantity(secondFive, 3)
+
+	if !isThreeOfAKind1 || !isThreeOfAKind2 {
+		fmt.Println("error - function returned full house but three of one card not found in input")
+		return -1
+	}
+	firstFive.Remove(threeOfAKind1)
+	secondFive.Remove(threeOfAKind2)
+
+	_, firstHighCard1 := checkHighestCardForQuantity(firstFive, 1)
+	_, firstHighCard2 := checkHighestCardForQuantity(secondFive, 1)
+	firstFive.Remove(firstHighCard1)
+	secondFive.Remove(firstHighCard2)
+
+	_, secondHighCard1 := checkHighestCardForQuantity(firstFive, 1)
+	_, secondHighCard2 := checkHighestCardForQuantity(secondFive, 1)
+
+	firstFive.Add(firstHighCard1)
+	firstFive.Add(threeOfAKind1)
+	secondFive.Add(firstHighCard2)
+	secondFive.Add(threeOfAKind2)
+
+	//check if one has higher three of a kind
+	threeOfAKindResult := compareCard(threeOfAKind1[0], threeOfAKind2[0])
+	if threeOfAKindResult != 0 {
+		return threeOfAKindResult
+	}
+
+	firstHighCardResult := compareCard(firstHighCard1[0], firstHighCard2[0])
+	if firstHighCardResult != 0 {
+		return firstHighCardResult
+	}
+
+	//if ==0, then hands are same value
+	return compareCard(secondHighCard1[0], secondHighCard2[0])
+
 }
 
 //compareCard iterates through the orderOfHighest list
