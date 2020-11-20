@@ -227,6 +227,7 @@ func comparePair(firstFive, secondFive Cards) int {
 
 	result := compareCard(pair1[0], pair2[0])
 	if result != 0 {
+		//add back removed cards
 		firstFive.Add(pair1)
 		secondFive.Add(pair2)
 		return result
@@ -236,6 +237,7 @@ func comparePair(firstFive, secondFive Cards) int {
 	sort.Sort(ByNumber(secondFive))
 
 	result1 := compareCards(firstFive, secondFive)
+	//add back removed cards
 	firstFive.Add(pair1)
 	secondFive.Add(pair2)
 	return result1
@@ -249,8 +251,7 @@ func comparePair(firstFive, secondFive Cards) int {
 //KC, TD, AS, 4H, 4D, should be passed in as 4H, 4D, AS, KC, TD
 //so that it can first evaluate the pair then the high cards
 
-//this function is only to be used by hands of the same type (ie full house and full house)
-//
+//this function is only to be used by cards list of same length
 func compareCards(cardList1, cardList2 Cards) int {
 	for index := range cardList1 {
 		result := compareCard(cardList1[index], cardList2[index])

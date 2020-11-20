@@ -43,8 +43,6 @@ func Test_compareStraightFlushes(t *testing.T) {
 		{"test same 5", args{firstFive: cards1, secondFive: cards1}, 0},
 		{"test first 5 better than second 5", args{firstFive: cards2, secondFive: cards1}, 1},
 		{"test low straight treated as low", args{firstFive: cards2, secondFive: cards3}, 1},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -95,8 +93,6 @@ func Test_compareQuads(t *testing.T) {
 		{"test higher quads first one", args{firstFive: cards3, secondFive: cards2}, 1},
 		{"test higher quads second one", args{firstFive: cards2, secondFive: cards3}, 2},
 		{"test same exact hand", args{firstFive: cards1, secondFive: cards1}, 0},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -147,8 +143,6 @@ func Test_compareFullHouses(t *testing.T) {
 		{"test same trips, higher pair on second", args{firstFive: cards2, secondFive: cards3}, 2},
 		{"test higher trips and higher pair on first", args{firstFive: cards3, secondFive: cards1}, 1},
 		{"test higher trips and higher pair on second", args{firstFive: cards1, secondFive: cards3}, 2},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -212,8 +206,6 @@ func Test_compareFlushes(t *testing.T) {
 		{"test same flush 2", args{firstFive: cards2, secondFive: cards2}, 0},
 		{"test same flush 3", args{firstFive: cards3, secondFive: cards3}, 0},
 		{"test same flush 4", args{firstFive: cards4, secondFive: cards4}, 0},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -298,8 +290,6 @@ func Test_compareStraight(t *testing.T) {
 		{"test same exact straight king high", args{firstFive: kingHigh, secondFive: kingHigh}, 0},
 		{"test same exact straight five high", args{firstFive: fiveHigh, secondFive: fiveHigh}, 0},
 		{"test same exact straight ace high", args{firstFive: aceHigh, secondFive: aceHigh}, 0},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -368,8 +358,6 @@ func Test_compareThreeOfAKind(t *testing.T) {
 		{"same value 2", args{firstFive: foursAQHigh, secondFive: foursAQHigh}, 0},
 		{"same value 3", args{firstFive: sixesAKHigh, secondFive: sixesAKHigh}, 0},
 		{"same value 4", args{firstFive: sixesJTHigh, secondFive: sixesJTHigh}, 0},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -516,8 +504,6 @@ func Test_comparePair(t *testing.T) {
 		{"same 4", args{firstFive: kingsQT9High, secondFive: kingsQT9High}, 0},
 		{"same 5", args{firstFive: kingsJT9High, secondFive: kingsJT9High}, 0},
 		{"same 6", args{firstFive: kingsJT8High, secondFive: kingsJT8High}, 0},
-
-		// TODO: Add test cases.
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
