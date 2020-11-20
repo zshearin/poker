@@ -223,3 +223,89 @@ func Test_compareFlushes(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareStraight(t *testing.T) {
+
+	eightHigh1 := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "D", Value: "5"},
+		Card{Suit: "C", Value: "6"},
+		Card{Suit: "H", Value: "7"},
+		Card{Suit: "S", Value: "8"},
+	}
+	eightHigh2 := Cards{
+		Card{Suit: "D", Value: "4"},
+		Card{Suit: "H", Value: "8"},
+		Card{Suit: "S", Value: "5"},
+		Card{Suit: "S", Value: "7"},
+		Card{Suit: "H", Value: "6"},
+	}
+
+	nineHigh := Cards{
+		Card{Suit: "C", Value: "5"},
+		Card{Suit: "D", Value: "6"},
+		Card{Suit: "C", Value: "7"},
+		Card{Suit: "H", Value: "8"},
+		Card{Suit: "S", Value: "9"},
+	}
+
+	fiveHigh := Cards{
+		Card{Suit: "H", Value: "4"},
+		Card{Suit: "D", Value: "2"},
+		Card{Suit: "C", Value: "A"},
+		Card{Suit: "C", Value: "3"},
+		Card{Suit: "S", Value: "5"},
+	}
+
+	aceHigh := Cards{
+		Card{Suit: "H", Value: "K"},
+		Card{Suit: "D", Value: "J"},
+		Card{Suit: "C", Value: "A"},
+		Card{Suit: "C", Value: "Q"},
+		Card{Suit: "S", Value: "T"},
+	}
+	kingHigh := Cards{
+		Card{Suit: "H", Value: "K"},
+		Card{Suit: "D", Value: "J"},
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "C", Value: "Q"},
+		Card{Suit: "S", Value: "T"},
+	}
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		//first higher tests
+		{"test one higher straight 1 - 1", args{firstFive: nineHigh, secondFive: eightHigh1}, 1},
+		{"test one higher straight 2 - 1", args{firstFive: nineHigh, secondFive: eightHigh2}, 1},
+		{"test highest higher than lowest - edge case both have ace - 1", args{firstFive: aceHigh, secondFive: fiveHigh}, 1},
+		{"test highest higher than second highest - 1", args{firstFive: aceHigh, secondFive: kingHigh}, 1},
+
+		//second higher tests
+		{"test one higher straight 1 - 2", args{firstFive: eightHigh1, secondFive: nineHigh}, 2},
+		{"test one higher straight 2 - 2", args{firstFive: eightHigh2, secondFive: nineHigh}, 2},
+		{"test highest higher than lowest - edge case both have ace - 2", args{firstFive: fiveHigh, secondFive: aceHigh}, 2},
+		{"test highest higher than second highest - 2", args{firstFive: kingHigh, secondFive: aceHigh}, 2},
+
+		//same tests
+		{"test same straight - dif suits", args{firstFive: eightHigh1, secondFive: eightHigh2}, 0},
+		{"test same exact straight nine high", args{firstFive: nineHigh, secondFive: nineHigh}, 0},
+		{"test same exact straight king high", args{firstFive: kingHigh, secondFive: kingHigh}, 0},
+		{"test same exact straight five high", args{firstFive: fiveHigh, secondFive: fiveHigh}, 0},
+		{"test same exact straight ace high", args{firstFive: aceHigh, secondFive: aceHigh}, 0},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareStraight(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareStraight() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
