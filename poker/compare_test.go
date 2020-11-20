@@ -513,3 +513,89 @@ func Test_comparePair(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareHighCards(t *testing.T) {
+
+	AKQJ9 := Cards{
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "J"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	AKQJ8 := Cards{
+		Card{Suit: "C", Value: "8"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "J"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	AKQT8 := Cards{
+		Card{Suit: "C", Value: "8"},
+		Card{Suit: "S", Value: "T"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "Q"},
+	}
+	AKJT8 := Cards{
+		Card{Suit: "C", Value: "T"},
+		Card{Suit: "S", Value: "8"},
+		Card{Suit: "D", Value: "J"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	AQJT8 := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "8"},
+		Card{Suit: "H", Value: "T"},
+		Card{Suit: "C", Value: "A"},
+	}
+
+	KQJT8 := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "8"},
+		Card{Suit: "H", Value: "T"},
+		Card{Suit: "C", Value: "K"},
+	}
+
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		//First hand better
+		{"first different", args{firstFive: AQJT8, secondFive: KQJT8}, 1},
+		{"second different", args{firstFive: AKJT8, secondFive: AQJT8}, 1},
+		{"third different", args{firstFive: AKQT8, secondFive: AKJT8}, 1},
+		{"fourth different", args{firstFive: AKQJ8, secondFive: AKQT8}, 1},
+		{"fifth different", args{firstFive: AKQJ9, secondFive: AKQJ8}, 1},
+
+		//Second hand better
+		{"first different", args{firstFive: KQJT8, secondFive: AQJT8}, 2},
+		{"second different", args{firstFive: AQJT8, secondFive: AKJT8}, 2},
+		{"third different", args{firstFive: AKJT8, secondFive: AKQT8}, 2},
+		{"fourth different", args{firstFive: AKQT8, secondFive: AKQJ8}, 2},
+		{"fifth different", args{firstFive: AKQJ8, secondFive: AKQJ9}, 2},
+
+		//Same hand
+		{"same 1", args{firstFive: AKQJ9, secondFive: AKQJ9}, 0},
+		{"same 2", args{firstFive: AKQJ8, secondFive: AKQJ8}, 0},
+		{"same 3", args{firstFive: AKQT8, secondFive: AKQT8}, 0},
+		{"same 4", args{firstFive: AKJT8, secondFive: AKJT8}, 0},
+		{"same 5", args{firstFive: KQJT8, secondFive: KQJT8}, 0},
+		{"same 6", args{firstFive: AQJT8, secondFive: AQJT8}, 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareHighCards(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareHighCards() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
