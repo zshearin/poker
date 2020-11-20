@@ -442,3 +442,88 @@ func Test_compareTwoPair(t *testing.T) {
 		})
 	}
 }
+
+func Test_comparePair(t *testing.T) {
+
+	kingsAQ9High := Cards{
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	acesQT9High := Cards{
+		Card{Suit: "C", Value: "9"},
+		Card{Suit: "S", Value: "T"},
+		Card{Suit: "D", Value: "A"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "Q"},
+	}
+	kingsAT9High := Cards{
+		Card{Suit: "C", Value: "T"},
+		Card{Suit: "S", Value: "9"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+
+	kingsQT9High := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "Q"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "T"},
+		Card{Suit: "C", Value: "K"},
+	}
+	kingsJT9High := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "9"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "T"},
+		Card{Suit: "C", Value: "K"},
+	}
+	kingsJT8High := Cards{
+		Card{Suit: "C", Value: "J"},
+		Card{Suit: "S", Value: "8"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "T"},
+		Card{Suit: "C", Value: "K"},
+	}
+
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		//First hand better
+		{"higher pair - 1", args{firstFive: acesQT9High, secondFive: kingsQT9High}, 1},
+		{"same pair, higher first kicker - 1", args{firstFive: kingsQT9High, secondFive: kingsJT9High}, 1},
+		{"same pair, higher second kicker - 1", args{firstFive: kingsAQ9High, secondFive: kingsAT9High}, 1},
+		{"same pair, higher third kicker - 1", args{firstFive: kingsJT9High, secondFive: kingsJT8High}, 1},
+		//Second hand better
+		{"higher pair - 2", args{firstFive: kingsQT9High, secondFive: acesQT9High}, 2},
+		{"same pair, higher first kicker - 2", args{firstFive: kingsJT9High, secondFive: kingsQT9High}, 2},
+		{"same pair, higher second kicker - 2", args{firstFive: kingsAT9High, secondFive: kingsAQ9High}, 2},
+		{"same pair, higher third kicker - 2", args{firstFive: kingsJT8High, secondFive: kingsJT9High}, 2},
+
+		//Test same
+		{"same 1", args{firstFive: kingsQT9High, secondFive: kingsQT9High}, 0},
+		{"same 2", args{firstFive: acesQT9High, secondFive: acesQT9High}, 0},
+		{"same 3", args{firstFive: kingsAT9High, secondFive: kingsAT9High}, 0},
+		{"same 4", args{firstFive: kingsQT9High, secondFive: kingsQT9High}, 0},
+		{"same 5", args{firstFive: kingsJT9High, secondFive: kingsJT9High}, 0},
+		{"same 6", args{firstFive: kingsJT8High, secondFive: kingsJT8High}, 0},
+
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := comparePair(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("comparePair() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
