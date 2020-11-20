@@ -48,6 +48,8 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 		return compareStraight(firstFive, secondFive), nil
 	} else if rank1 == 6 {
 		return compareThreeOfAKind(firstFive, secondFive), nil
+	} else if rank1 == 7 {
+		return compareTwoPair(firstFive, secondFive), nil
 	}
 
 	return 0, nil
@@ -197,6 +199,83 @@ func compareThreeOfAKind(firstFive, secondFive Cards) int {
 	//check if one has higher second high card.  if same, hands are same and return 0
 	return compareCard(secondHighCard1[0], secondHighCard2[0])
 
+}
+
+//Eval criteria: first pair comparison, then second pair comparison, then high card comparison
+func compareTwoPair(firstFive, secondFive Cards) int {
+	//first pair
+	firstPair1, firstPair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
+	if err != nil {
+		return -1
+	}
+	firstFive.Remove(firstPair1)
+	secondFive.Remove(firstPair2)
+
+	//then second pair
+	secondPair1, secondPair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
+	if err != nil {
+		return -1
+	}
+	firstFive.Remove(secondPair1)
+	secondFive.Remove(secondPair2)
+
+	//then high card
+	highCard1, highCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
+	if err != nil {
+		return -1
+	}
+
+	//Add cards back that were removed
+	firstFive.Add(firstPair1)
+	secondFive.Add(firstPair2)
+	firstFive.Add(secondPair1)
+	secondFive.Add(secondPair2)
+
+	//Make list of cards to compare
+	var firstEvalOrder, secondEvalOrder Cards
+	firstEvalOrder = append(firstEvalOrder, firstPair1[0], secondPair1[0], highCard1[0])
+	secondEvalOrder = append(secondEvalOrder, firstPair2[0], secondPair2[0], highCard2[0])
+
+	return compareCards(firstEvalOrder, secondEvalOrder)
+}
+
+//compareCards takes two lists of equal length cards and compares each index
+
+//expects cards to be in order from first to eval to last (not necessarily in order of highest)
+//Example: this hand:
+//KC, TD, AS, 4H, 4D, should be passed in as 4H, 4D, AS, KC, TD
+//so that it can first evaluate the pair then the high cards
+
+//this function is only to be used by hands of the same type (ie full house and full house)
+//
+func compareCards(cardList1, cardList2 Cards) int {
+	for index := range cardList1 {
+		result := compareCard(cardList1[index], cardList2[index])
+		if result != 0 {
+			return result
+		}
+	}
+
+	return 0
+}
+
+func getHighestCardsForQuantity(firstCards, secondCards Cards, quantity int) (Cards, Cards, error) {
+
+	found1, cards1 := checkHighestCardForQuantity(firstCards, quantity)
+	found2, cards2 := checkHighestCardForQuantity(secondCards, quantity)
+	if !found1 || !found2 {
+		err := errors.New("bad input - function can only be called if its known to have the desired quantity")
+		fmt.Println("error: " + err.Error())
+		return Cards{}, Cards{}, err
+	}
+
+	if len(cards1) == 0 || len(cards2) == 0 {
+		err := errors.New("bad input - no cards found")
+		fmt.Println("error: " + err.Error())
+		return Cards{}, Cards{}, err
+	}
+
+	return cards1, cards2, nil
 }
 
 //compareCard iterates through the orderOfHighest list

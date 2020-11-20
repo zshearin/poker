@@ -379,3 +379,66 @@ func Test_compareThreeOfAKind(t *testing.T) {
 		})
 	}
 }
+
+func Test_compareTwoPair(t *testing.T) {
+	kingsAndFoursAHigh := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "S", Value: "4"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "K"},
+	}
+	acesAndFoursQHigh := Cards{
+		Card{Suit: "C", Value: "4"},
+		Card{Suit: "S", Value: "4"},
+		Card{Suit: "D", Value: "A"},
+		Card{Suit: "H", Value: "A"},
+		Card{Suit: "C", Value: "Q"},
+	}
+	kingsAndSixesAHigh := Cards{
+		Card{Suit: "C", Value: "K"},
+		Card{Suit: "S", Value: "A"},
+		Card{Suit: "D", Value: "K"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+	kingsAndSixesQHigh := Cards{
+		Card{Suit: "C", Value: "K"},
+		Card{Suit: "S", Value: "K"},
+		Card{Suit: "D", Value: "Q"},
+		Card{Suit: "H", Value: "6"},
+		Card{Suit: "C", Value: "6"},
+	}
+	type args struct {
+		firstFive  Cards
+		secondFive Cards
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		//First hand better
+		{"test higher first pair - 1", args{firstFive: acesAndFoursQHigh, secondFive: kingsAndSixesAHigh}, 1},
+		{"test same first pair, higher second pair - 1", args{firstFive: kingsAndSixesQHigh, secondFive: kingsAndFoursAHigh}, 1},
+		{"test same pairs, higher kicker - 1", args{firstFive: kingsAndSixesAHigh, secondFive: kingsAndSixesQHigh}, 1},
+
+		//Second hand better
+		{"test higher first pair - 2", args{firstFive: kingsAndSixesAHigh, secondFive: acesAndFoursQHigh}, 2},
+		{"test same first pair, higher second pair - 2", args{firstFive: kingsAndFoursAHigh, secondFive: kingsAndSixesQHigh}, 2},
+		{"test same pairs, higher kicker - 2", args{firstFive: kingsAndSixesQHigh, secondFive: kingsAndSixesAHigh}, 2},
+
+		//Hands the same
+		{"test same 1", args{firstFive: kingsAndFoursAHigh, secondFive: kingsAndFoursAHigh}, 0},
+		{"test same 2", args{firstFive: acesAndFoursQHigh, secondFive: acesAndFoursQHigh}, 0},
+		{"test same 3", args{firstFive: kingsAndSixesAHigh, secondFive: kingsAndSixesAHigh}, 0},
+		{"test same 4", args{firstFive: kingsAndSixesQHigh, secondFive: kingsAndSixesQHigh}, 0},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := compareTwoPair(tt.args.firstFive, tt.args.secondFive); got != tt.want {
+				t.Errorf("compareTwoPair() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
