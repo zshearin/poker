@@ -1,3 +1,3 @@
-module github.com/zshearin/poker-go
+module github.com/zshearin/poker
 
-go 1.13
+go 1.15

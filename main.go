@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/zshearin/poker-go/poker"
+	game "github.com/zshearin/poker/game"
 )
 
 func main() {
@@ -15,19 +15,19 @@ func main() {
 }
 
 //function implemented for testing - should create unit tests instead
-func getCardsToEvaluate() poker.Cards {
-	cards := poker.Cards{
-		poker.Card{Value: "J", Suit: "H"},
-		poker.Card{Value: "6", Suit: "D"},
-		poker.Card{Value: "5", Suit: "D"},
-		poker.Card{Value: "K", Suit: "H"},
-		poker.Card{Value: "A", Suit: "D"},
+func getCardsToEvaluate() game.Cards {
+	cards := game.Cards{
+		game.Card{Value: "J", Suit: "H"},
+		game.Card{Value: "6", Suit: "D"},
+		game.Card{Value: "5", Suit: "D"},
+		game.Card{Value: "K", Suit: "H"},
+		game.Card{Value: "A", Suit: "D"},
 	}
 	return cards
 }
 
-func getShuffledDeck() poker.Deck {
-	deck := poker.GetDeck()
+func getShuffledDeck() game.Deck {
+	deck := game.GetDeck()
 
 	//	deck.PrintOrder()
 	deck.Shuffle()
