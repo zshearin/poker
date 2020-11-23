@@ -1,4 +1,4 @@
-# poker-go
+# poker
 This creates a poker game and evaluates what each hand is
 
 TODO/IN PROGRESS: add call into game to choose what hand is the best/order the hands (function comparing two hands is done)
