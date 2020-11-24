@@ -1,5 +1,105 @@
 package poker
 
+import (
+	"fmt"
+)
+
+//Deal is the cards for the flop, turn, river and hands dealt to each player
+type Deal struct {
+	Hands        Hands
+	Flop         Cards
+	Turn         Cards
+	River        Cards
+	BestFiveList []Cards
+}
+
+//PrintBoardAndHands prints the board and the hands
+func (d *Deal) PrintBoardAndHands() {
+	d.PrintBoard()
+	d.PrintHands()
+}
+
+//PrintBoard prints the board for a game
+func (d *Deal) PrintBoard() {
+
+	var board Cards
+
+	for _, card := range d.Flop {
+		board = append(board, card)
+	}
+
+	for _, card := range d.Turn {
+		board = append(board, card)
+	}
+
+	for _, card := range d.River {
+		board = append(board, card)
+	}
+
+	board.Print("Board")
+}
+
+//PrintHands prints the hands for a game
+func (d *Deal) PrintHands() {
+	d.Hands.Print()
+}
+
+//PrintBestFive prints the all the cards to be evaluated for a hand
+func (d *Deal) PrintBestFive() {
+	for _, val := range d.BestFiveList {
+		printBestFive(val)
+	}
+
+}
+
+func printBestFive(cards Cards) {
+
+	bestFiveCards, _ := cards.GetFiveBest(true)
+
+	for _, card := range bestFiveCards {
+		val := card.Value
+		if card.Value == "1" {
+			val = "A"
+		}
+		fmt.Printf(val + card.Suit + " ")
+	}
+	fmt.Printf("\n\n")
+}
+
+//GetDeal deals hands and returns a deal object
+func (d *Deck) GetDeal(players int) Deal {
+
+	hands := d.Deal(players, 2)
+	flop := d.GetFlop()
+	turn := d.GetTurn()
+	river := d.GetRiver()
+
+	var bestFiveCardsList []Cards
+
+	for _, curCards := range hands {
+
+		var curCardList Cards
+
+		curCardList = append(curCardList, curCards...)
+		curCardList = append(curCardList, flop...)
+		curCardList = append(curCardList, turn...)
+		curCardList = append(curCardList, river...)
+
+		bestFiveCards, _ := curCardList.GetFiveBest(false)
+
+		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
+	}
+
+	deal := Deal{
+		Hands:        hands,
+		Flop:         flop,
+		Turn:         turn,
+		River:        river,
+		BestFiveList: bestFiveCardsList,
+	}
+	return deal
+}
+
 //DealHoldEm deals 2 cards to the number of hands passed in
 //eg: if 6 is passed in, it will return 6 hands of 2
 func (d *Deck) DealHoldEm(numHands int) Hands {

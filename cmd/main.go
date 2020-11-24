@@ -11,11 +11,11 @@ func main() {
 
 }
 
-func shuffleAndDeal(players int) poker.Game {
+func shuffleAndDeal(players int) poker.Deal {
 
 	deck := poker.GetDeck()
 	deck.Shuffle()
 	deck.Shuffle()
 	//deck.PrintOrder()
-	return deck.GetGame(players)
+	return deck.GetDeal(players)
 }
