@@ -2,7 +2,41 @@ package poker
 
 import (
 	"fmt"
+	"strconv"
 )
+
+func getStringForRank(rank int) string {
+
+	switch rank {
+	case 1:
+		return "straight flush"
+	case 2:
+		return "quads"
+	case 3:
+		return "full house"
+	case 4:
+		return "flush"
+	case 5:
+		return "straight"
+	case 6:
+		return "three of a kind"
+	case 7:
+		return "two pair"
+	case 8:
+		return "pair"
+	case 9:
+		return "high card"
+
+	default:
+		return "there's an error"
+	}
+
+}
+
+type Player struct {
+	Num      int
+	BestFive Cards
+}
 
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
@@ -10,7 +44,8 @@ type Deal struct {
 	Flop         Cards
 	Turn         Cards
 	River        Cards
-	BestFiveList []Cards
+	BestFiveList []Cards //
+	Players      []Player
 }
 
 //PrintBoardAndHands prints the board and the hands
@@ -46,37 +81,44 @@ func (d *Deal) PrintHands() {
 
 //PrintBestFive prints the all the cards to be evaluated for a hand
 func (d *Deal) PrintBestFive() {
-	for _, val := range d.BestFiveList {
-		printBestFive(val)
+	for i, val := range d.Players {
+		fmt.Printf("hand " + strconv.Itoa(i+1) + ": ")
+		printBestFive(val.BestFive)
 	}
-
 }
 
 func printBestFive(cards Cards) {
 
-	bestFiveCards, _ := cards.GetFiveBest(true)
+	bestFiveCards, rank := GetFiveBest(cards)
 
-	for _, card := range bestFiveCards {
+	rankStr := getStringForRank(rank)
+
+	fmt.Printf(rankStr + " (")
+	for i, card := range bestFiveCards {
 		val := card.Value
 		if card.Value == "1" {
 			val = "A"
 		}
-		fmt.Printf(val + card.Suit + " ")
+		fmt.Printf(val + card.Suit)
+		if i != len(bestFiveCards)-1 {
+			fmt.Printf(", ")
+		}
 	}
-	fmt.Printf("\n\n")
+
+	fmt.Printf(")\n")
 }
 
 //GetDeal deals hands and returns a deal object
-func (d *Deck) GetDeal(players int) Deal {
+func (d *Deck) GetDeal(numPlayers int) Deal {
 
-	hands := d.Deal(players, 2)
+	hands := d.Deal(numPlayers, 2)
 	flop := d.GetFlop()
 	turn := d.GetTurn()
 	river := d.GetRiver()
 
-	var bestFiveCardsList []Cards
+	var players []Player
 
-	for _, curCards := range hands {
+	for i, curCards := range hands {
 
 		var curCardList Cards
 
@@ -85,17 +127,19 @@ func (d *Deck) GetDeal(players int) Deal {
 		curCardList = append(curCardList, turn...)
 		curCardList = append(curCardList, river...)
 
-		bestFiveCards, _ := curCardList.GetFiveBest(false)
+		bestFiveCards, _ := GetFiveBest(curCardList)
 
-		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
+		curPlayer := Player{Num: i + 1, BestFive: bestFiveCards}
+		players = append(players, curPlayer)
+		//		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
 	}
 
 	deal := Deal{
-		Hands:        hands,
-		Flop:         flop,
-		Turn:         turn,
-		River:        river,
-		BestFiveList: bestFiveCardsList,
+		Hands:   hands,
+		Flop:    flop,
+		Turn:    turn,
+		River:   river,
+		Players: players,
 	}
 	return deal
 }

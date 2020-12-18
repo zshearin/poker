@@ -26,9 +26,8 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 		return -1, errors.New("bad input - both card sets need to be of length 5")
 	}
 
-	_, rank1 := firstFive.GetFiveBest(false)
-	_, rank2 := secondFive.GetFiveBest(false)
-
+	firstFive, rank1 := GetFiveBest(firstFive)
+	secondFive, rank2 := GetFiveBest(secondFive)
 	if rank1 < rank2 {
 		return 1, nil
 	} else if rank2 < rank1 {

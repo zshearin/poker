@@ -27,56 +27,47 @@ func init() {
 //GetFiveBest evaluates the hand and prints out what it is
 //First return param: the 5 best cards
 //Second return param: the ranking of the 5 best cards.  Rankings can be found above
-func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
+func GetFiveBest(cards Cards) (Cards, int) {
 
-	sort.Sort(ByNumber(*c))
+	cardCopy := make(Cards, len(cards))
+	copy(cardCopy, cards)
 
-	cards := *c
+	sort.Sort(ByNumber(cardCopy))
 
 	//Get suit map - creates four subsets of all the cards for eval
-	suitMap := getSuitToCardsMap(cards)
+	suitMap := getSuitToCardsMap(cardCopy)
 
 	//Check straight flush
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
-		if printValue {
-			fmt.Println("straight flush")
-		}
 		return straightFlushCards, 1
 	}
 
 	//Check quads
-	isQuads, cardsFound := checkHighestCardForQuantity(cards, 4)
+	isQuads, cardsFound := checkHighestCardForQuantity(cardCopy, 4)
 
 	if isQuads {
 
-		if printValue {
-			fmt.Println("quads")
-		}
-
-		cards.Remove(cardsFound)
-		highCards := getNumHighCards(cards, 1)
-		cards.Add(cardsFound)
+		cardCopy.Remove(cardsFound)
+		highCards := getNumHighCards(cardCopy, 1)
+		cardCopy.Add(cardsFound)
 		cardsFound = append(cardsFound, highCards...)
 
 		return cardsFound, 2
 	}
 
 	//Check full house
-	isThreeOfAKind, foundCards := checkHighestCardForQuantity(cards, 3)
+	isThreeOfAKind, foundCards := checkHighestCardForQuantity(cardCopy, 3)
 	if isThreeOfAKind {
 
-		cards.Remove(foundCards)
+		cardCopy.Remove(foundCards)
 
-		isPair, foundPair := checkHighestCardForQuantity(cards, 2)
+		isPair, foundPair := checkHighestCardForQuantity(cardCopy, 2)
 
 		//if not a full house, add back 3 of a kind for later eval
-		cards.Add(foundCards)
+		cardCopy.Add(foundCards)
 
 		if isPair {
-			if printValue {
-				fmt.Println("full house")
-			}
 			foundCards = append(foundCards, foundPair...)
 			return foundCards, 3
 		}
@@ -86,85 +77,62 @@ func (c *Cards) GetFiveBest(printValue bool) (Cards, int) {
 	//Check flush
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
-		if printValue {
-			fmt.Println("flush - suit is: " + flushCards[0].Suit)
-		}
 		return flushCards, 4
-
 	}
 
 	//=======================================================================
 	// below this line, suit no longer matters (but would like to return winning hand with suit)
 
 	//Check straight
-	isStraight, straightCards := checkForFiveInARow(cards)
+	isStraight, straightCards := checkForFiveInARow(cardCopy)
 	if isStraight {
-		if printValue {
-			fmt.Println("straight")
-		}
 		return straightCards, 5
 	}
 
-	//TODO - ADD PROCESSING THREE OF A KIND
-	isThreeOfAKind, foundCards = checkHighestCardForQuantity(cards, 3)
+	isThreeOfAKind, foundCards = checkHighestCardForQuantity(cardCopy, 3)
 	if isThreeOfAKind {
-		if printValue {
-			fmt.Println("three of a kind")
-		}
 
-		cards.Remove(foundCards)
-
-		twoHighCards := getNumHighCards(cards, 2)
-		cards.Add(foundCards)
-
+		cardCopy.Remove(foundCards)
+		twoHighCards := getNumHighCards(cardCopy, 2)
+		cardCopy.Add(foundCards)
 		foundCards = append(foundCards, twoHighCards...)
-
 		return foundCards, 6
 
 	}
 
 	//Processes Pair and Two Pair
-	isPair, foundCards := checkHighestCardForQuantity(cards, 2)
+	isPair, foundCards := checkHighestCardForQuantity(cardCopy, 2)
 	if isPair {
 
-		cards.Remove(foundCards)
-		isTwoPair, secondPair := checkHighestCardForQuantity(cards, 2)
+		cardCopy.Remove(foundCards)
+		isTwoPair, secondPair := checkHighestCardForQuantity(cardCopy, 2)
 
 		if isTwoPair {
-			if printValue {
-				fmt.Println("two pair")
-			}
 
-			cards.Remove(secondPair)
+			cardCopy.Remove(secondPair)
 			foundCards = append(foundCards, secondPair...)
 
-			highCards := getNumHighCards(cards, 1)
-			cards.Remove(highCards)
+			highCards := getNumHighCards(cardCopy, 1)
+			cardCopy.Remove(highCards)
 			foundCards = append(foundCards, highCards...)
 
-			cards.Add(foundCards)
+			cardCopy.Add(foundCards)
 			return foundCards, 7
 		}
 
-		if printValue {
-			fmt.Println("pair")
-		}
-		highCards := getNumHighCards(cards, 3)
+		//Pair (not two pair)
+		highCards := getNumHighCards(cardCopy, 3)
 
-		cards.Remove(highCards)
+		cardCopy.Remove(highCards)
 		foundCards = append(foundCards, highCards...)
 
-		cards.Add(foundCards)
+		cardCopy.Add(foundCards)
 		return foundCards, 8
 
 	}
 
-	//just a high card:
-	if printValue {
-		fmt.Println("high cards")
-	}
-	highCards := getNumHighCards(cards, 5)
-
+	//just a high card
+	highCards := getNumHighCards(cardCopy, 5)
 	return highCards, 9
 }
 
