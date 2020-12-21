@@ -5,6 +5,12 @@ import (
 	"strconv"
 )
 
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
+
 func getStringForRank(rank int) string {
 
 	switch rank {
@@ -33,19 +39,23 @@ func getStringForRank(rank int) string {
 
 }
 
+//Players is a list of Player objects
+type Players []Player
+
+//Player is a player that is part of a deal
 type Player struct {
 	Num      int
 	BestFive Cards
+	HandName string
 }
 
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
-	Hands        Hands
-	Flop         Cards
-	Turn         Cards
-	River        Cards
-	BestFiveList []Cards //
-	Players      []Player
+	Hands   Hands
+	Flop    Cards
+	Turn    Cards
+	River   Cards
+	Players Players
 }
 
 //PrintBoardAndHands prints the board and the hands
@@ -71,7 +81,7 @@ func (d *Deal) PrintBoard() {
 		board = append(board, card)
 	}
 
-	board.Print("Board")
+	board.Print("Board", "")
 }
 
 //PrintHands prints the hands for a game
@@ -116,7 +126,7 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 	turn := d.GetTurn()
 	river := d.GetRiver()
 
-	var players []Player
+	var players Players
 
 	for i, curCards := range hands {
 
@@ -127,21 +137,52 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 		curCardList = append(curCardList, turn...)
 		curCardList = append(curCardList, river...)
 
-		bestFiveCards, _ := GetFiveBest(curCardList)
+		bestFiveCards, rank := GetFiveBest(curCardList)
 
-		curPlayer := Player{Num: i + 1, BestFive: bestFiveCards}
+		curPlayer := Player{
+			Num:      i + 1,
+			BestFive: bestFiveCards,
+			HandName: getStringForRank(rank),
+		}
+
 		players = append(players, curPlayer)
 		//		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
 	}
+
+	sortedPlayers := sortPlayers(players)
 
 	deal := Deal{
 		Hands:   hands,
 		Flop:    flop,
 		Turn:    turn,
 		River:   river,
-		Players: players,
+		Players: sortedPlayers,
 	}
 	return deal
+}
+
+func sortPlayers(pList Players) Players {
+
+	playersList := make(Players, len(pList))
+	copy(playersList, pList)
+
+	for i := 0; i < len(playersList)-1; i++ {
+		for j := 0; j < len(playersList)-i-1; j++ {
+
+			curBestFive1 := playersList[j].BestFive
+			curBestFive2 := playersList[j+1].BestFive
+
+			winner, err := CompareTwoBestFive(curBestFive1, curBestFive2)
+			check(err)
+
+			if winner == 2 {
+				playersList[j], playersList[j+1] = playersList[j+1], playersList[j]
+			}
+		}
+	}
+
+	return playersList
+
 }
 
 //DealHoldEm deals 2 cards to the number of hands passed in
@@ -221,4 +262,14 @@ func (d *Deck) Deal(numHands, numCards int) Hands {
 	}
 
 	return hands
+}
+
+//Print prints players
+func (p Players) Print() {
+	for i := 0; i < len(p); i++ {
+		playerNum := p[i].Num
+
+		p[i].BestFive.Print("Player "+strconv.Itoa(playerNum), " ("+p[i].HandName+")")
+	}
+
 }
