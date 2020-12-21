@@ -53,24 +53,29 @@ func (d Deck) PrintRemainingCards() {
 //Print prints hands
 func (h Hands) Print() {
 	for index, hand := range h {
-		hand.Print("Hand " + strconv.Itoa(index+1))
+		hand.Print("Hand "+strconv.Itoa(index+1), "")
 	}
 	fmt.Printf("\n")
 }
 
 //Print prints cards
-func (c Cards) Print(cardCategory string) {
+func (c Cards) Print(beforeStr, afterStr string) {
 	var b bytes.Buffer
-	b.WriteString(cardCategory)
+	b.WriteString(beforeStr)
 	b.WriteString(": ")
 	for index, card := range c {
-		b.WriteString(card.Value)
+		if card.Value == "1" {
+			b.WriteString("A")
+		} else {
+			b.WriteString(card.Value)
+		}
 		b.WriteString(card.Suit)
 		if index != len(c)-1 {
 			b.WriteString("  ")
 		}
 
 	}
+	b.WriteString(afterStr)
 	b.WriteString("\n")
 	fmt.Printf(b.String())
 

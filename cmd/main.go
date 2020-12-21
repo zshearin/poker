@@ -5,10 +5,10 @@ import (
 )
 
 func main() {
-	game1 := shuffleAndDeal(5)
-	game1.PrintBoardAndHands()
-	game1.PrintBestFive()
+	deal1 := shuffleAndDeal(4)
 
+	deal1.PrintBoardAndHands()
+	deal1.Players.Print()
 }
 
 func shuffleAndDeal(players int) poker.Deal {
