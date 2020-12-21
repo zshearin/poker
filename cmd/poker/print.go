@@ -80,3 +80,13 @@ func (c Cards) Print(beforeStr, afterStr string) {
 	fmt.Printf(b.String())
 
 }
+
+//Print prints players
+func (p Players) Print() {
+	for i := 0; i < len(p); i++ {
+		playerNum := p[i].Num
+
+		p[i].BestFive.Print("Player "+strconv.Itoa(playerNum), " ("+p[i].HandName+")")
+	}
+
+}

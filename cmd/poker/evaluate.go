@@ -260,7 +260,6 @@ func checkForStraightFlush(suitMap map[string]Cards) (bool, Cards) {
 			if straightFlushFound {
 				return straightFlushFound, straightFlushCards
 			}
-
 		}
 	}
 	return false, Cards{}

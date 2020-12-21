@@ -1,10 +1,5 @@
 package poker
 
-import (
-	"fmt"
-	"strconv"
-)
-
 func check(err error) {
 	if err != nil {
 		panic(err)
@@ -87,35 +82,6 @@ func (d *Deal) PrintBoard() {
 //PrintHands prints the hands for a game
 func (d *Deal) PrintHands() {
 	d.Hands.Print()
-}
-
-//PrintBestFive prints the all the cards to be evaluated for a hand
-func (d *Deal) PrintBestFive() {
-	for i, val := range d.Players {
-		fmt.Printf("hand " + strconv.Itoa(i+1) + ": ")
-		printBestFive(val.BestFive)
-	}
-}
-
-func printBestFive(cards Cards) {
-
-	bestFiveCards, rank := GetFiveBest(cards)
-
-	rankStr := getStringForRank(rank)
-
-	fmt.Printf(rankStr + " (")
-	for i, card := range bestFiveCards {
-		val := card.Value
-		if card.Value == "1" {
-			val = "A"
-		}
-		fmt.Printf(val + card.Suit)
-		if i != len(bestFiveCards)-1 {
-			fmt.Printf(", ")
-		}
-	}
-
-	fmt.Printf(")\n")
 }
 
 //GetDeal deals hands and returns a deal object
@@ -262,14 +228,4 @@ func (d *Deck) Deal(numHands, numCards int) Hands {
 	}
 
 	return hands
-}
-
-//Print prints players
-func (p Players) Print() {
-	for i := 0; i < len(p); i++ {
-		playerNum := p[i].Num
-
-		p[i].BestFive.Print("Player "+strconv.Itoa(playerNum), " ("+p[i].HandName+")")
-	}
-
 }

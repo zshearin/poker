@@ -97,7 +97,6 @@ func compareQuads(firstFive Cards, secondFive Cards) int {
 	secondEvalOrder = append(secondEvalOrder, quads2[0], highCard2[0])
 
 	return compareCards(firstEvalOrder, secondEvalOrder)
-
 }
 
 func compareFullHouses(firstFive, secondFive Cards) int {
@@ -136,8 +135,6 @@ func compareFlushes(firstFive, secondFive Cards) int {
 
 		result := compareCard((firstFive)[i], (secondFive)[i])
 		if result != 0 {
-			//Debugging with unit tests if desired:
-			//fmt.Println("index: " + strconv.Itoa(i) + ", card1: " + (firstFive)[i].Value + ", card2: " + (secondFive)[i].Value)
 			return result
 		}
 	}
