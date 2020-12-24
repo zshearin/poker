@@ -14,16 +14,6 @@ func init() {
 
 }
 
-//straight flush  - 1
-//quads           - 2
-//full house      - 3
-//flush           - 4
-//straight        - 5
-//three of a kind - 6
-//two pair        - 7
-//pair            - 8
-//high card       - 9
-
 //GetFiveBest evaluates the hand and prints out what it is
 //First return param: the 5 best cards
 //Second return param: the ranking of the 5 best cards.  Rankings can be found above
@@ -40,7 +30,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 	//Check straight flush
 	isStraightFlush, straightFlushCards := checkForStraightFlush(suitMap)
 	if isStraightFlush {
-		return straightFlushCards, 1
+		return straightFlushCards, straightFlush
 	}
 
 	//Check quads
@@ -53,7 +43,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 		cardCopy.Add(cardsFound)
 		cardsFound = append(cardsFound, highCards...)
 
-		return cardsFound, 2
+		return cardsFound, quads
 	}
 
 	//Check full house
@@ -69,7 +59,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 
 		if isPair {
 			foundCards = append(foundCards, foundPair...)
-			return foundCards, 3
+			return foundCards, fullHouse
 		}
 
 	}
@@ -77,7 +67,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 	//Check flush
 	isFlush, flushCards := checkForFlush(suitMap)
 	if isFlush {
-		return flushCards, 4
+		return flushCards, flush
 	}
 
 	//=======================================================================
@@ -86,7 +76,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 	//Check straight
 	isStraight, straightCards := checkForFiveInARow(cardCopy)
 	if isStraight {
-		return straightCards, 5
+		return straightCards, straight
 	}
 
 	isThreeOfAKind, foundCards = checkHighestCardForQuantity(cardCopy, 3)
@@ -96,7 +86,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 		twoHighCards := getNumHighCards(cardCopy, 2)
 		cardCopy.Add(foundCards)
 		foundCards = append(foundCards, twoHighCards...)
-		return foundCards, 6
+		return foundCards, threeOfAKind
 
 	}
 
@@ -117,7 +107,7 @@ func GetFiveBest(cards Cards) (Cards, int) {
 			foundCards = append(foundCards, highCards...)
 
 			cardCopy.Add(foundCards)
-			return foundCards, 7
+			return foundCards, twoPair
 		}
 
 		//Pair (not two pair)
@@ -127,13 +117,13 @@ func GetFiveBest(cards Cards) (Cards, int) {
 		foundCards = append(foundCards, highCards...)
 
 		cardCopy.Add(foundCards)
-		return foundCards, 8
+		return foundCards, pair
 
 	}
 
 	//just a high card
 	highCards := getNumHighCards(cardCopy, 5)
-	return highCards, 9
+	return highCards, highCard
 }
 
 //Add adds cards to a Cards object.  This is intended to be used for failed multistep checks (fullhouse, two pair)

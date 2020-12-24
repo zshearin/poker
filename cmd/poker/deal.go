@@ -46,11 +46,20 @@ type Player struct {
 
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
-	Hands   Hands
-	Flop    Cards
-	Turn    Cards
-	River   Cards
-	Players Players
+	Hands       Hands
+	Flop        Cards
+	Turn        Cards
+	River       Cards
+	Players     Players
+	HandResults []HandResult
+}
+
+//HandResult is the player number and the hand that they had
+//This keeps track of the relative rank between players and the type of hand
+//that they have
+type HandResult struct {
+	PlayerNumber int
+	HandName     string
 }
 
 //PrintBoardAndHands prints the board and the hands
@@ -59,22 +68,22 @@ func (d *Deal) PrintBoardAndHands() {
 	d.PrintHands()
 }
 
-//PrintBoard prints the board for a game
-func (d *Deal) PrintBoard() {
+//GetBoard gets the board by appending the flop, turn and river
+func (d *Deal) GetBoard() Cards {
 
 	var board Cards
 
-	for _, card := range d.Flop {
-		board = append(board, card)
-	}
+	board = append(board, d.Flop...)
+	board = append(board, d.Turn...)
+	board = append(board, d.River...)
 
-	for _, card := range d.Turn {
-		board = append(board, card)
-	}
+	return board
+}
 
-	for _, card := range d.River {
-		board = append(board, card)
-	}
+//PrintBoard prints the board for a game
+func (d *Deal) PrintBoard() {
+
+	board := d.GetBoard()
 
 	board.Print("Board", "")
 }
@@ -117,12 +126,15 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 
 	sortedPlayers := sortPlayers(players)
 
+	handResults := getRankOrderList(sortedPlayers)
+
 	deal := Deal{
-		Hands:   hands,
-		Flop:    flop,
-		Turn:    turn,
-		River:   river,
-		Players: sortedPlayers,
+		Hands:       hands,
+		Flop:        flop,
+		Turn:        turn,
+		River:       river,
+		Players:     sortedPlayers,
+		HandResults: handResults,
 	}
 	return deal
 }
@@ -149,6 +161,25 @@ func sortPlayers(pList Players) Players {
 
 	return playersList
 
+}
+
+func getRankOrderList(p Players) []HandResult {
+	/*
+
+		type HandResult struct {
+			PlayerNumber int
+			HandName     string
+		}
+	*/
+	var handResults []HandResult
+	for _, val := range p {
+
+		handResult := HandResult{PlayerNumber: val.Num, HandName: val.HandName}
+
+		handResults = append(handResults, handResult)
+	}
+
+	return handResults
 }
 
 //DealHoldEm deals 2 cards to the number of hands passed in

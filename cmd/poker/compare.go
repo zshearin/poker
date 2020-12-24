@@ -6,28 +6,36 @@ import (
 	"sort"
 )
 
-//straight flush  - 1
-//quads           - 2
-//full house      - 3
-//flush           - 4
-//straight        - 5
-//three of a kind - 6
-//two pair        - 7
-//pair            - 8
-//high card       - 9
+const (
+	straightFlush = 1
+	quads         = 2
+	fullHouse     = 3
+	flush         = 4
+	straight      = 5
+	threeOfAKind  = 6
+	twoPair       = 7
+	pair          = 8
+	highCard      = 9
+	errConstant   = -1
+)
 
 //CompareTwoBestFive compares two hands
 //returns 1 if first hand best, 2 if second hand best and
 //0 if hands are the same (in evaluation, not necessarily identical)
-//-1 if error
+//errConstant if error
 func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 
-	if len(firstFive) != 5 || len(secondFive) != 5 {
-		return -1, errors.New("bad input - both card sets need to be of length 5")
+	firstFiveCopy := make(Cards, len(firstFive))
+	copy(firstFiveCopy, firstFive)
+	secondFiveCopy := make(Cards, len(secondFive))
+	copy(secondFiveCopy, secondFive)
+
+	if len(firstFiveCopy) != 5 || len(secondFiveCopy) != 5 {
+		return errConstant, errors.New("bad input - both card sets need to be of length 5")
 	}
 
-	firstFive, rank1 := GetFiveBest(firstFive)
-	secondFive, rank2 := GetFiveBest(secondFive)
+	firstFiveCopy, rank1 := GetFiveBest(firstFiveCopy)
+	secondFiveCopy, rank2 := GetFiveBest(secondFiveCopy)
 	if rank1 < rank2 {
 		return 1, nil
 	} else if rank2 < rank1 {
@@ -35,27 +43,27 @@ func CompareTwoBestFive(firstFive, secondFive Cards) (int, error) {
 	}
 
 	//have same level of hand, need to evaluate further
-	if rank1 == 1 {
-		return compareStraightFlushes(firstFive, secondFive), nil
-	} else if rank1 == 2 {
-		return compareQuads(firstFive, secondFive), nil
-	} else if rank1 == 3 {
-		return compareFullHouses(firstFive, secondFive), nil
-	} else if rank1 == 4 {
-		return compareFlushes(firstFive, secondFive), nil
-	} else if rank1 == 5 {
-		return compareStraight(firstFive, secondFive), nil
-	} else if rank1 == 6 {
-		return compareThreeOfAKind(firstFive, secondFive), nil
-	} else if rank1 == 7 {
-		return compareTwoPair(firstFive, secondFive), nil
-	} else if rank1 == 8 {
-		return comparePair(firstFive, secondFive), nil
-	} else if rank1 == 9 {
-		return compareHighCards(firstFive, secondFive), nil
+	if rank1 == straightFlush {
+		return compareStraightFlushes(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == quads {
+		return compareQuads(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == fullHouse {
+		return compareFullHouses(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == flush {
+		return compareFlushes(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == straight {
+		return compareStraight(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == threeOfAKind {
+		return compareThreeOfAKind(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == twoPair {
+		return compareTwoPair(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == pair {
+		return comparePair(firstFiveCopy, secondFiveCopy), nil
+	} else if rank1 == highCard {
+		return compareHighCards(firstFiveCopy, secondFiveCopy), nil
 	}
 
-	return -1, errors.New("do not understand input")
+	return errConstant, errors.New("do not understand input")
 
 }
 
@@ -69,14 +77,14 @@ func compareStraight(firstFive Cards, secondFive Cards) int {
 	sort.Sort(ByNumber(secondFive))
 
 	//using index 1 because its the simple fix for the low straight case
-	//the sort will treat ace as high (will likely do something similar for straight as well)
+	//the sort will treat ace as high
 	return compareCard(firstFive[1], secondFive[1])
 }
 
 func compareQuads(firstFive Cards, secondFive Cards) int {
 	quads1, quads2, err := getHighestCardsForQuantity(firstFive, secondFive, 4)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 
 	//remove the quads from both hands and get the high card remaining value
@@ -85,7 +93,7 @@ func compareQuads(firstFive Cards, secondFive Cards) int {
 
 	highCard1, highCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 	//Add back quads
 	firstFive.Add(quads1)
@@ -102,7 +110,7 @@ func compareQuads(firstFive Cards, secondFive Cards) int {
 func compareFullHouses(firstFive, secondFive Cards) int {
 	threeOfAKind1, threeOfAKind2, err := getHighestCardsForQuantity(firstFive, secondFive, 3)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 
 	//remove for pair eval
@@ -111,7 +119,7 @@ func compareFullHouses(firstFive, secondFive Cards) int {
 
 	pair1, pair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 
 	//add back
@@ -128,11 +136,13 @@ func compareFullHouses(firstFive, secondFive Cards) int {
 
 func compareFlushes(firstFive, secondFive Cards) int {
 
+	//Sort from highest to lowest
 	sort.Sort(ByNumber(firstFive))
 	sort.Sort(ByNumber(secondFive))
 
 	for i := range firstFive {
 
+		//Go in order and compare each value
 		result := compareCard((firstFive)[i], (secondFive)[i])
 		if result != 0 {
 			return result
@@ -144,7 +154,7 @@ func compareFlushes(firstFive, secondFive Cards) int {
 func compareThreeOfAKind(firstFive, secondFive Cards) int {
 	threeOfAKind1, threeOfAKind2, err := getHighestCardsForQuantity(firstFive, secondFive, 3)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 
 	result := compareCard(threeOfAKind1[0], threeOfAKind2[0])
@@ -168,7 +178,7 @@ func compareTwoPair(firstFive, secondFive Cards) int {
 	//first pair
 	firstPair1, firstPair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 	firstFive.Remove(firstPair1)
 	secondFive.Remove(firstPair2)
@@ -176,7 +186,7 @@ func compareTwoPair(firstFive, secondFive Cards) int {
 	//then second pair
 	secondPair1, secondPair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 	firstFive.Remove(secondPair1)
 	secondFive.Remove(secondPair2)
@@ -184,7 +194,7 @@ func compareTwoPair(firstFive, secondFive Cards) int {
 	//then high card
 	highCard1, highCard2, err := getHighestCardsForQuantity(firstFive, secondFive, 1)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 
 	//Add cards back that were removed
@@ -206,7 +216,7 @@ func comparePair(firstFive, secondFive Cards) int {
 	//pair
 	pair1, pair2, err := getHighestCardsForQuantity(firstFive, secondFive, 2)
 	if err != nil {
-		return -1
+		return errConstant
 	}
 	firstFive.Remove(pair1)
 	secondFive.Remove(pair2)
