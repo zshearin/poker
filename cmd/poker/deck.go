@@ -40,7 +40,6 @@ func GetDeck() Deck {
 	}
 	deck.NextCardIndex = 0
 	return deck
-
 }
 
 //Shuffle shuffles a deck of cards
