@@ -6,6 +6,4 @@ TODO/IN PROGRESS: add call into game to choose what hand is the best/order the h
 once functionality is implemented, I would like to look into making runtime more efficient (specifically with the comparison and evaluation of hands functions)
 
 
-
-
-TODO: figure out why it's handling a second reqeust and printing it to the logs
+TODO: figure out why it's handling a second reqeust and printing it to the logs (on an api call, its logging like it ran the function twice instead of once)
