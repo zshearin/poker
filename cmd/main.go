@@ -11,15 +11,15 @@ import (
 func main() {
 
 	http.HandleFunc("/", pokerHandler)
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":4050", nil))
 
 }
 
 func pokerHandler(w http.ResponseWriter, r *http.Request) {
 	deal1 := shuffleAndDeal(4)
 
-	//	deal1.PrintBoardAndHands()
-	//	deal1.Players.Print()
+	deal1.PrintBoardAndHands()
+	deal1.Players.Print()
 
 	type result struct {
 		Board       poker.Cards
