@@ -34,7 +34,7 @@ COPY --from=build /tmp/app/out/api /app/api
 WORKDIR "/app"
 
 # Exposes the 5000 port from the container
-EXPOSE 5000
+EXPOSE 4050
 
 # Runs the binary once the container starts
 CMD ["./api"]

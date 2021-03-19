@@ -22,12 +22,21 @@ test:
 
 #can use a different location for a dockerfile by -f ./<path to dockerfile + name of dockerfile>
 docker-build:
-	docker build -f ./Dockerfile -t poker-app:$(TAG) .
+	docker build -f ./Dockerfile -t poker:$(TAG) .
+
+docker-build-latest:
+	docker build -t poker .
+
+docker-run-latest:
+	docker run --name api -d -p 4050:4050 poker
 
 docker-run:
-	docker run --name api -d -p 4050:4050 poker-app:$(TAG)
+	docker run --name api -d -p 4050:4050 poker:$(TAG)
 
 br: docker-build docker-run
 
 docker-push:
-	docker image push poker-app:$(TAG)
+	docker image push poker:$(TAG)
+
+docker-push-latest:
+	docker image push poker
