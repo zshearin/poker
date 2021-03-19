@@ -33,7 +33,7 @@ COPY --from=build /tmp/app/out/api /app/api
 # Switches working directory to /app
 WORKDIR "/app"
 
-# Exposes the 5000 port from the container
+# Exposes the 4050 port from the container
 EXPOSE 4050
 
 # Runs the binary once the container starts

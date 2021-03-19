@@ -34,9 +34,3 @@ docker-run:
 	docker run --name api -d -p 4050:4050 poker:$(TAG)
 
 br: docker-build docker-run
-
-docker-push:
-	docker image push poker:$(TAG)
-
-docker-push-latest:
-	docker image push poker
