@@ -1,9 +1,12 @@
 SHELL := /bin/bash
 
+#-include $(shell curl -sSL -o .build-harness "https://git.io/build-harness"; echo .build-harness)
+
 CURRENT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 TIMESTAMP := $(shell date "+%Y%m%d%H%M%S")
 
-$(eval TAG=$(CURRENT_BRANCH)_$(TIMESTAMP))
+#$(eval TAG=$(CURRENT_BRANCH)_$(TIMESTAMP))
+$(eval TAG=$(CURRENT_BRANCH))
 
 tag:
 	@echo $(TAG)
