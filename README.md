@@ -1,9 +1,8 @@
 # poker
-This creates a poker game and evaluates what each hand is
 
-TODO/IN PROGRESS: add call into game to choose what hand is the best/order the hands (function comparing two hands is done)
+Current state: testing failures - I have it crashing after a given amount of time to test AWS functionality with crashing program
 
-once functionality is implemented, I would like to look into making runtime more efficient (specifically with the comparison and evaluation of hands functions)
-
-
-TODO: figure out why it's handling a second reqeust and printing it to the logs (on an api call, its logging like it ran the function twice instead of once)
+This creates a poker game and evaluates what each hand is.  Right now it is a basic http server that returns the outcome of a hand for four players.  In the json return object currently:
+1. The Board in order (list of 5 Card objects: 5 cards - first 3 are flop, 4th is turn and 5th is the river)
+2. Hands dealt to each player (a list of the players hands.  Each player's hand is a list of 2 card objects)
+3. Hand results (Ordered list in the winning hands with the player number and a description of their hand)
