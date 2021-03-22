@@ -5,20 +5,23 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"time"
 
-	"math/rand"
-
 	poker "github.com/zshearin/poker/cmd/poker"
 )
 
+var startTime time.Time
+
 func main() {
 
-	go handleServer()
+	startTime = time.Now()
 
-	crashTheProgram()
+	handleServer()
+
+	//crashTheProgram()
 }
 
 func handleServer() {
@@ -32,7 +35,7 @@ func crashTheProgram() {
 	max := 30
 
 	randInt := rand.Intn(max-min) + min
-	fmt.Print("Sleeping for " + strconv.Itoa(randInt) + " seconds before we crash")
+	fmt.Println("Sleeping for " + strconv.Itoa(randInt) + " seconds before we crash")
 
 	time.Sleep(time.Duration(randInt) * time.Second)
 	fmt.Println("Crashing the program")
@@ -45,6 +48,16 @@ func pokerHandler(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
+
+		curTime := time.Now()
+		elapsed := curTime.Sub(startTime)
+
+		secondsTillFailure := 30
+		if elapsed > time.Duration(secondsTillFailure)*time.Second {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("its failing now, application has been running for " + elapsed.String() + " and threshold set at " + strconv.Itoa(secondsTillFailure) + " seconds"))
+			return
+		}
 
 		deal1 := shuffleAndDeal(4)
 
@@ -66,7 +79,6 @@ func pokerHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(res)
 		//Now format the body with all the objects we want
-
 	default:
 		w.WriteHeader(http.StatusNotImplemented)
 		w.Write([]byte(http.StatusText(http.StatusNotImplemented)))

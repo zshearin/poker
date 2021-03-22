@@ -8,6 +8,9 @@ TIMESTAMP := $(shell date "+%Y%m%d%H%M%S")
 #$(eval TAG=$(CURRENT_BRANCH)_$(TIMESTAMP))
 $(eval TAG=$(CURRENT_BRANCH))
 
+build-linux:
+	GOOS=linux GOARCH=amd64 go build ./cmd/main.go && mv main ./bin/application
+
 tag:
 	@echo $(TAG)
 
