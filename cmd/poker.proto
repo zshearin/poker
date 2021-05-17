@@ -1,0 +1,32 @@
+syntax = "proto3";
+package proto;
+
+option go_package = "./";
+
+message Request {
+	int32 hands = 1;
+}
+
+message Deal {
+	repeated Card board =1;
+	repeated Hand hands=2;
+	repeated HandResult results=3;
+}
+
+message Hand {
+	repeated Card hand=1;
+}
+
+message Card {
+	string suit = 1;
+	string value = 2;
+}
+
+message HandResult {
+	int32 player = 1;
+	string handName = 2;
+}
+
+service PokerService {
+	rpc GetDeal(Request) returns (Deal);
+}
