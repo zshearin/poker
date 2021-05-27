@@ -37,3 +37,8 @@ docker-run:
 	docker run --name api -d -p 4050:4050 poker:$(TAG)
 
 br: docker-build docker-run
+
+
+proto:
+	cd cmd
+	protoc --go_out=plugins=grpc:proto poker.proto
