@@ -34,21 +34,21 @@ This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		fmt.Println("deal called")
-        game := shuffleAndDeal(4)
-        game.PrintBoardAndHands()
+	        game := shuffleAndDeal(4)
+        	game.PrintBoardAndHands()
 
-        type result struct {
-                Board dealer.Cards
-                Hands dealer.Hands
-                HandResults []dealer.HandResult
-        }
-        res := result{
-                Board: game.GetBoard(),
-                Hands: game.Hands,
-                HandResults: game.HandResults,
-        }
+        	type result struct {
+                	Board dealer.Cards
+                	Hands dealer.Hands
+                	HandResults []dealer.HandResult
+        	}
+        	res := result{
+               		Board: game.GetBoard(),
+                	Hands: game.Hands,
+                	HandResults: game.HandResults,
+        	}
 
-        fmt.Printf("%+v\n", res.HandResults)
+        	fmt.Printf("%+v\n", res.HandResults)
 	},
 }
 
