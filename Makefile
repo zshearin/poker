@@ -15,15 +15,16 @@ tag:
 	@echo $(TAG)
 
 build:
-	go build ./cmd/main.go
+	go build -o poker
 
 run:
-	go run ./cmd/main.go
+	go run main.go deal
 
 test:
-	go test ./poker/...
+	go test ./cmd/dealer/...
 
 #can use a different location for a dockerfile by -f ./<path to dockerfile + name of dockerfile>
+#TODO - MAKE THIS A SERVER THAT CAN BE INTERFACED VIA COMMAND LINE OR REST/GRPC CALLS
 docker-build:
 	docker build -f ./Dockerfile -t poker:$(TAG) .
 
