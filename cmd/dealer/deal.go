@@ -6,6 +6,10 @@ func check(err error) {
 	}
 }
 
+var (
+	MIN_SPACE = 15
+)
+
 func getStringForRank(rank int) string {
 
 	switch rank {
@@ -47,10 +51,9 @@ type Player struct {
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
 	Hands       Hands
-	Flop        Cards
+	Flop        Cards //TODO - CHANGE TO BOARD WHERE FLOP IS INDEX 0-2, TURN IS 3 AND RIVER IS 4
 	Turn        Cards
 	River       Cards
-	Players     Players
 	HandResults []HandResult
 }
 
@@ -58,14 +61,8 @@ type Deal struct {
 //This keeps track of the relative rank between players and the type of hand
 //that they have
 type HandResult struct {
-	PlayerNumber int
-	HandName     string
-}
-
-//PrintBoardAndHands prints the board and the hands
-func (d *Deal) PrintBoardAndHands() {
-	d.PrintBoard()
-	d.PrintHands()
+	Player           Player
+	RelativeHandRank int
 }
 
 //GetBoard gets the board by appending the flop, turn and river
@@ -78,19 +75,6 @@ func (d *Deal) GetBoard() Cards {
 	board = append(board, d.River...)
 
 	return board
-}
-
-//PrintBoard prints the board for a game
-func (d *Deal) PrintBoard() {
-
-	board := d.GetBoard()
-
-	board.Print("Board", "")
-}
-
-//PrintHands prints the hands for a game
-func (d *Deal) PrintHands() {
-	d.Hands.Print()
 }
 
 //GetDeal deals hands and returns a deal object
@@ -121,24 +105,24 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 		}
 
 		players = append(players, curPlayer)
-		//		bestFiveCardsList = append(bestFiveCardsList, bestFiveCards)
 	}
 
 	sortedPlayers := sortPlayers(players)
 
-	handResults := getRankOrderList(sortedPlayers)
+	winnerMap := getRankOrderMap(sortedPlayers)
+	handResults := formatHandResults(winnerMap)
 
 	deal := Deal{
 		Hands:       hands,
 		Flop:        flop,
 		Turn:        turn,
 		River:       river,
-		Players:     sortedPlayers,
 		HandResults: handResults,
 	}
 	return deal
 }
 
+//sort players sorts the list of players to an ordered list based on ranking
 func sortPlayers(pList Players) Players {
 
 	playersList := make(Players, len(pList))
@@ -158,28 +142,60 @@ func sortPlayers(pList Players) Players {
 			}
 		}
 	}
-
 	return playersList
 
 }
+func formatHandResults(p map[int]Players) []HandResult {
+	numRanks := len(p)
 
-func getRankOrderList(p Players) []HandResult {
-	/*
-
-		type HandResult struct {
-			PlayerNumber int
-			HandName     string
-		}
-	*/
 	var handResults []HandResult
-	for _, val := range p {
 
-		handResult := HandResult{PlayerNumber: val.Num, HandName: val.HandName}
+	for i := 0; i < numRanks; i++ {
+		curRank := i + 1
+		curPlayerList := p[curRank]
 
-		handResults = append(handResults, handResult)
+		for _, curPlayer := range curPlayerList {
+			handResult := HandResult{
+				Player:           curPlayer,
+				RelativeHandRank: curRank,
+			}
+			handResults = append(handResults, handResult)
+		}
+
 	}
-
 	return handResults
+
+}
+
+func getRankOrderMap(p Players) map[int]Players {
+	var curPList Players
+	curWinner := 1
+	curPList = append(curPList, p[0])
+	winnerMap := map[int]Players{curWinner: curPList}
+
+	//start at the second element
+	for i := 1; i < len(p); i++ {
+		//keep track of cur rank being used
+		curList := winnerMap[curWinner]
+		//previous
+		curBestFive1 := p[i-1].BestFive
+		//current
+		curBestFive2 := p[i].BestFive
+
+		winner, err := CompareTwoBestFive(curBestFive1, curBestFive2)
+		check(err)
+
+		if winner == 0 {
+			curList = append(curList, p[i])
+			winnerMap[curWinner] = curList
+		} else {
+			curWinner = curWinner + 1
+			var newList Players
+			newList = append(newList, p[i])
+			winnerMap[curWinner] = newList
+		}
+	}
+	return winnerMap
 }
 
 //DealHoldEm deals 2 cards to the number of hands passed in
@@ -210,9 +226,7 @@ func (d *Deck) Reset() {
 
 //GetCard gets the next card in a deck and updates the index of the deck object
 func (d *Deck) GetCard() Card {
-	var card Card
-
-	card = d.Cards[d.NextCardIndex]
+	card := d.Cards[d.NextCardIndex]
 	d.NextCardIndex++
 	return card
 }
@@ -251,10 +265,7 @@ func (d *Deck) Deal(numHands, numCards int) Hands {
 			curHand := hands[j]
 			nextCard := d.GetCard()
 			curHand = append(curHand, nextCard)
-			//curHand = append(curHand, d.Cards[d.NextCardIndex])
 			hands[j] = curHand
-
-			//d.NextCardIndex++
 		}
 	}
 
