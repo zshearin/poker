@@ -139,8 +139,6 @@ func (d *Deal) PrintRanksAndBestFive() {
 }
 
 func getLineToPrint(handResult HandResult) string {
-	var sb strings.Builder
-
 	curPlayer := handResult.Player
 
 	//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
@@ -168,6 +166,8 @@ func getLineToPrint(handResult HandResult) string {
 
 	}
 
+	//Build output string and return
+	var sb strings.Builder
 	sb.WriteString("|   ")
 	sb.WriteString(playerNumStr)
 	sb.WriteString("   |  ")

@@ -47,8 +47,6 @@ func dealCmd() *cobra.Command {
 }
 
 func runDealCmd(cmd *cobra.Command, args []string) error {
-	//fmt.Println("deal called")
-	//fmt.Printf("\nHands: %d\n\n", hands)
 	if hands > 10 {
 		return errors.New("maximum number of hands to deal in is 10")
 	}
