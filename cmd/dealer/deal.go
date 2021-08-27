@@ -6,10 +6,6 @@ func check(err error) {
 	}
 }
 
-var (
-	MIN_SPACE = 15
-)
-
 func getStringForRank(rank int) string {
 
 	switch rank {

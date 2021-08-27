@@ -16,29 +16,16 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/spf13/cobra"
 	dealer "github.com/zshearin/poker/cmd/dealer"
 )
 
-// dealCmd represents the deal command
-var dealCmd = &cobra.Command{
-	Use:   "deal",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
-
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("deal called")
-		game := shuffleAndDeal(4)
-		game.PrintBoardAndHands()
-		game.PrintRanksAndBestFive()
-	},
-}
+var (
+	hands int
+	print bool
+)
 
 func shuffleAndDeal(players int) dealer.Deal {
 	deck := dealer.GetDeck()
@@ -48,8 +35,33 @@ func shuffleAndDeal(players int) dealer.Deal {
 	return deck.GetDeal(players)
 }
 
+func dealCmd() *cobra.Command {
+	dealCmd := &cobra.Command{
+		Use:   "deal",
+		Short: "Deal holdem hand and get outcome",
+		RunE:  runDealCmd,
+	}
+	dealCmd.Flags().BoolVar(&print, "print", true, "")
+	dealCmd.Flags().IntVar(&hands, "hands", 6, "")
+	return dealCmd
+}
+
+func runDealCmd(cmd *cobra.Command, args []string) error {
+	//fmt.Println("deal called")
+	//fmt.Printf("\nHands: %d\n\n", hands)
+	if hands > 10 {
+		return errors.New("maximum number of hands to deal in is 10")
+	}
+	game := shuffleAndDeal(hands)
+	if print {
+		game.PrintBoardAndHands()
+		game.PrintRanksAndBestFive()
+	}
+	return nil
+}
+
 func init() {
-	rootCmd.AddCommand(dealCmd)
+	rootCmd.AddCommand(dealCmd())
 
 	// Here you will define your flags and configuration settings.
 

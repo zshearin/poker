@@ -7,6 +7,10 @@ import (
 	"strings"
 )
 
+var (
+	MIN_SPACE = 16
+)
+
 //PrintOrder prints the order of the deck
 func (d Deck) PrintOrder() {
 	var b bytes.Buffer
@@ -54,7 +58,13 @@ func (d Deck) PrintRemainingCards() {
 //Print prints hands
 func (h Hands) Print() {
 	for index, hand := range h {
-		hand.Print("Hand "+strconv.Itoa(index+1), "")
+		playerStr := strconv.Itoa(index + 1)
+
+		//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
+		if len(playerStr) == 1 {
+			playerStr = " " + playerStr
+		}
+		hand.Print("Hand "+playerStr, "")
 	}
 	fmt.Printf("\n")
 }
@@ -72,7 +82,7 @@ func (c Cards) Print(beforeStr, afterStr string) {
 		}
 		b.WriteString(card.Suit)
 		if index != len(c)-1 {
-			b.WriteString("  ")
+			b.WriteString(", ")
 		}
 
 	}
@@ -123,15 +133,53 @@ func (d *Deal) PrintHands() {
 }
 
 func (d *Deal) PrintRanksAndBestFive() {
+	fmt.Println("Results:")
+
+	fmt.Println("| Player | Rank |    Best Five   |     Hand Name   |")
+	fmt.Println("----------------------------------------------------")
 
 	for _, handResult := range d.HandResults {
 		curPlayer := handResult.Player
-		fmt.Printf("Player %d rank: %d. Hand name: %s.", curPlayer.Num, handResult.RelativeHandRank, curPlayer.HandName)
 
-		spaces := strings.Repeat(" ", MIN_SPACE-len(curPlayer.HandName))
-		fmt.Printf("%s Best Five: ", spaces)
+		playerNumStr := strconv.Itoa(curPlayer.Num)
+		//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
+		if len(playerNumStr) == 1 {
+			playerNumStr = playerNumStr + " "
+		}
+
+		handRankStr := strconv.Itoa(handResult.RelativeHandRank)
+		if len(handRankStr) == 1 {
+			handRankStr = " " + handRankStr
+		}
+
+		fmt.Printf("|   %s   |", playerNumStr)
+		fmt.Printf("  %s  | ", handRankStr)
 		curPlayer.BestFive.BasicPrint()
-		fmt.Printf("\n")
+		fmt.Printf(" | ")
+
+		numSpaces := MIN_SPACE - len(curPlayer.HandName)
+		spacesBefore := strings.Repeat(" ", numSpaces/2)
+
+		fmt.Printf(spacesBefore)
+		fmt.Printf(curPlayer.HandName)
+		//spaces := strings.Repeat(" ", MIN_SPACE-len(curPlayer.HandName))
+
+		var spacesAfter string
+		if numSpaces%2 == 0 {
+			spacesAfter = strings.Repeat(" ", numSpaces/2)
+		} else {
+			spacesAfter = strings.Repeat(" ", numSpaces/2+1)
+
+		}
+		fmt.Printf("%s|\n", spacesAfter)
+
+		/*		fmt.Printf("Player %s rank: %d. Hand name: %s.", playerNumStr, handResult.RelativeHandRank, curPlayer.HandName)
+
+				spaces := strings.Repeat(" ", MIN_SPACE-len(curPlayer.HandName))
+				fmt.Printf("%s Best Five: ", spaces)
+				curPlayer.BestFive.BasicPrint()
+				fmt.Printf("\n")
+		*/
 	}
 }
 
