@@ -26,8 +26,7 @@ func (d Deck) PrintOrder() {
 			b.WriteString(", ")
 		}
 	}
-	b.WriteString("\n")
-	fmt.Printf(b.String())
+	fmt.Println(b.String())
 }
 
 //PrintRemainingCards prints the remaining cards in the deck
@@ -51,8 +50,7 @@ func (d Deck) PrintRemainingCards() {
 			b.WriteString(", ")
 		}
 	}
-	b.WriteString("\n")
-	fmt.Printf(b.String())
+	fmt.Println(b.String())
 }
 
 //Print prints hands
@@ -87,12 +85,11 @@ func (c Cards) Print(beforeStr, afterStr string) {
 
 	}
 	b.WriteString(afterStr)
-	b.WriteString("\n")
-	fmt.Printf(b.String())
+	fmt.Println(b.String())
 
 }
 
-func (c Cards) BasicPrint() {
+func (c Cards) getBestFiveString() string {
 	var b bytes.Buffer
 	for index, card := range c {
 		if card.Value == "1" {
@@ -106,24 +103,20 @@ func (c Cards) BasicPrint() {
 		}
 
 	}
-	fmt.Printf(b.String())
+	return b.String()
 }
 
 //Print prints players
 func (p Players) Print() {
 	for i := 0; i < len(p); i++ {
 		playerNum := p[i].Num
-
 		p[i].BestFive.Print("Player "+strconv.Itoa(playerNum), " ("+p[i].HandName+")")
 	}
-
 }
 
 //PrintBoard prints the board for a game
 func (d *Deal) PrintBoard() {
-
 	board := d.GetBoard()
-
 	board.Print("Board", "")
 }
 
@@ -134,53 +127,59 @@ func (d *Deal) PrintHands() {
 
 func (d *Deal) PrintRanksAndBestFive() {
 	fmt.Println("Results:")
-
+	fmt.Println("====================================================")
 	fmt.Println("| Player | Rank |    Best Five   |     Hand Name   |")
-	fmt.Println("----------------------------------------------------")
+	fmt.Println("====================================================")
 
 	for _, handResult := range d.HandResults {
-		curPlayer := handResult.Player
-
-		playerNumStr := strconv.Itoa(curPlayer.Num)
-		//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
-		if len(playerNumStr) == 1 {
-			playerNumStr = playerNumStr + " "
-		}
-
-		handRankStr := strconv.Itoa(handResult.RelativeHandRank)
-		if len(handRankStr) == 1 {
-			handRankStr = " " + handRankStr
-		}
-
-		fmt.Printf("|   %s   |", playerNumStr)
-		fmt.Printf("  %s  | ", handRankStr)
-		curPlayer.BestFive.BasicPrint()
-		fmt.Printf(" | ")
-
-		numSpaces := MIN_SPACE - len(curPlayer.HandName)
-		spacesBefore := strings.Repeat(" ", numSpaces/2)
-
-		fmt.Printf(spacesBefore)
-		fmt.Printf(curPlayer.HandName)
-		//spaces := strings.Repeat(" ", MIN_SPACE-len(curPlayer.HandName))
-
-		var spacesAfter string
-		if numSpaces%2 == 0 {
-			spacesAfter = strings.Repeat(" ", numSpaces/2)
-		} else {
-			spacesAfter = strings.Repeat(" ", numSpaces/2+1)
-
-		}
-		fmt.Printf("%s|\n", spacesAfter)
-
-		/*		fmt.Printf("Player %s rank: %d. Hand name: %s.", playerNumStr, handResult.RelativeHandRank, curPlayer.HandName)
-
-				spaces := strings.Repeat(" ", MIN_SPACE-len(curPlayer.HandName))
-				fmt.Printf("%s Best Five: ", spaces)
-				curPlayer.BestFive.BasicPrint()
-				fmt.Printf("\n")
-		*/
+		line := getLineToPrint(handResult)
+		fmt.Println(line)
 	}
+	fmt.Println("----------------------------------------------------")
+}
+
+func getLineToPrint(handResult HandResult) string {
+	var sb strings.Builder
+
+	curPlayer := handResult.Player
+
+	//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
+	playerNumStr := strconv.Itoa(curPlayer.Num)
+	if len(playerNumStr) == 1 {
+		playerNumStr = playerNumStr + " "
+	}
+
+	//Add space to make formatting prettier if 10 handed - 2 chars vs 1 in digit
+	handRankStr := strconv.Itoa(handResult.RelativeHandRank)
+	if len(handRankStr) == 1 {
+		handRankStr = " " + handRankStr
+	}
+
+	bestFiveStr := curPlayer.BestFive.getBestFiveString()
+
+	//Calculate spaces before and after hand name for prettier formatting
+	numSpaces := MIN_SPACE - len(curPlayer.HandName)
+	spacesBefore := strings.Repeat(" ", numSpaces/2)
+	var spacesAfter string
+	if numSpaces%2 == 0 {
+		spacesAfter = strings.Repeat(" ", numSpaces/2)
+	} else {
+		spacesAfter = strings.Repeat(" ", numSpaces/2+1)
+
+	}
+
+	sb.WriteString("|   ")
+	sb.WriteString(playerNumStr)
+	sb.WriteString("   |  ")
+	sb.WriteString(handRankStr)
+	sb.WriteString("  | ")
+	sb.WriteString(bestFiveStr)
+	sb.WriteString(" | ")
+	sb.WriteString(spacesBefore)
+	sb.WriteString(curPlayer.HandName)
+	sb.WriteString(spacesAfter)
+	sb.WriteString("|")
+	return sb.String()
 }
 
 //PrintBoardAndHands prints the board and the hands
