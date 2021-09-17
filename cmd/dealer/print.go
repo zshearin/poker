@@ -116,8 +116,7 @@ func (p Players) Print() {
 
 //PrintBoard prints the board for a game
 func (d *Deal) PrintBoard() {
-	board := d.GetBoard()
-	board.Print("Board", "")
+	d.Board.Print("Board", "")
 }
 
 //PrintHands prints the hands for a game

@@ -46,10 +46,11 @@ type Player struct {
 
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
-	Hands       Hands
-	Flop        Cards //TODO - CHANGE TO BOARD WHERE FLOP IS INDEX 0-2, TURN IS 3 AND RIVER IS 4
-	Turn        Cards
-	River       Cards
+	Hands Hands
+	/*	Flop        Cards //TODO - CHANGE TO BOARD WHERE FLOP IS INDEX 0-2, TURN IS 3 AND RIVER IS 4
+		Turn        Cards
+		River       Cards
+	*/Board     Cards
 	HandResults []HandResult
 }
 
@@ -61,18 +62,6 @@ type HandResult struct {
 	RelativeHandRank int
 }
 
-//GetBoard gets the board by appending the flop, turn and river
-func (d *Deal) GetBoard() Cards {
-
-	var board Cards
-
-	board = append(board, d.Flop...)
-	board = append(board, d.Turn...)
-	board = append(board, d.River...)
-
-	return board
-}
-
 //GetDeal deals hands and returns a deal object
 func (d *Deck) GetDeal(numPlayers int) Deal {
 
@@ -81,6 +70,11 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 	turn := d.GetTurn()
 	river := d.GetRiver()
 
+	var board Cards
+	board = append(board, flop...)
+	board = append(board, turn...)
+	board = append(board, river...)
+
 	var players Players
 
 	for i, curCards := range hands {
@@ -88,9 +82,7 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 		var curCardList Cards
 
 		curCardList = append(curCardList, curCards...)
-		curCardList = append(curCardList, flop...)
-		curCardList = append(curCardList, turn...)
-		curCardList = append(curCardList, river...)
+		curCardList = append(curCardList, board...)
 
 		bestFiveCards, rank := GetFiveBest(curCardList)
 
@@ -110,9 +102,7 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 
 	deal := Deal{
 		Hands:       hands,
-		Flop:        flop,
-		Turn:        turn,
-		River:       river,
+		Board:       board,
 		HandResults: handResults,
 	}
 	return deal
