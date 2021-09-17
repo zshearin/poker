@@ -23,6 +23,25 @@ import (
 	"github.com/spf13/viper"
 )
 
+
+func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+}
+
+
+func New() *cobra.Command {
+	cmd := &cobra.Command{
+		Use: "pokerservice",
+		Short: "Poker service"
+	}
+
+	//TODO - ADD PARAMS PICKED UP BY ENV VARIABLES HERE
+
+	cmd.AddCommand(newServerCmd())
+
+
+}
+/*
 var cfgFile string
 
 // rootCmd represents the base command when called without any subcommands
@@ -83,3 +102,5 @@ func initConfig() {
 		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
 	}
 }
+*/
+

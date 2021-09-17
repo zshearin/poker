@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package poker.v1alpha1;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/zshearin/poker/api/v1alpha1";
+
+service PokerAPI {
+    rpc GetGame(GetGameRequest) returns (GetGameResponse) {
+        option (google.api.http) = {
+            get: "/v1alpha1/game"
+        };
+    }
+}
+
+message GetGameRequest {
+    int32 hands = 1;
+}
+
+message GetGameResponse {
+    Deal deal = 1;
+}
+
+message Deal {
+    repeated Hand hands = 1;
+    repeated Card board = 2;
+    repeated HandResult hand_result = 3;
+}
+
+message HandResult {
+    Player player = 1;
+    int32 relative_hand_rank = 2;
+}
+message Player {
+    int32 number = 1;
+    repeated Card best_five = 2;
+    string hand_name = 3;
+}
+
+message Hand {
+    repeated Card cards = 1;
+}
+
+message Card {
+    string suit = 1;
+    string value= 2;
+}
