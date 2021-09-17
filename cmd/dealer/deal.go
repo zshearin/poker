@@ -46,11 +46,8 @@ type Player struct {
 
 //Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
-	Hands Hands
-	/*	Flop        Cards //TODO - CHANGE TO BOARD WHERE FLOP IS INDEX 0-2, TURN IS 3 AND RIVER IS 4
-		Turn        Cards
-		River       Cards
-	*/Board     Cards
+	Hands       Hands
+	Board       Cards
 	HandResults []HandResult
 }
 
