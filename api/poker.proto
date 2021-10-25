@@ -2,15 +2,15 @@ syntax = "proto3";
 
 package poker.v1alpha1;
 
-import "google/api/annotations.proto";
+//import "google/api/annotations.proto";
 
 option go_package = "github.com/zshearin/poker/api/v1alpha1";
 
 service PokerAPI {
     rpc GetGame(GetGameRequest) returns (GetGameResponse) {
-        option (google.api.http) = {
-            get: "/v1alpha1/game"
-        };
+//        option (google.api.http) = {
+//            get: "/v1alpha1/game"
+//        };
     }
 }
 
@@ -44,5 +44,5 @@ message Hand {
 
 message Card {
     string suit = 1;
-    string value= 2;
+    string value = 2;
 }
