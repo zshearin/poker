@@ -13,6 +13,9 @@ import (
 
 type grpcServer struct {
 	getGame grpc.Handler
+	p_v1alpha1.UnimplementedPokerAPIServer
+	//	unimp   grpc.Handler
+	//	blah    p_v1alpha1.UnimplementedPokerAPIServer
 }
 
 func NewGrpcTransport(ep *Endpoints, logger log.Logger) p_v1alpha1.PokerAPIServer {
@@ -21,7 +24,7 @@ func NewGrpcTransport(ep *Endpoints, logger log.Logger) p_v1alpha1.PokerAPIServe
 		grpc.ServerErrorHandler(errorHandler),
 	}
 
-	return &grpcServer{
+	server := &grpcServer{
 		getGame: grpc.NewServer(
 			ep.getGame,
 			decodeGetGameRequest,
@@ -29,6 +32,26 @@ func NewGrpcTransport(ep *Endpoints, logger log.Logger) p_v1alpha1.PokerAPIServe
 			options...,
 		),
 	}
+
+	server.mustEmbedUnimplementedPokerAPIServer()
+
+	return server
+
+	// return &grpcServer{
+	// 	getGame: grpc.NewServer(
+	// 		ep.getGame,
+	// 		decodeGetGameRequest,
+	// 		encodeGetGameResponse,
+	// 		options...,
+	// 	),
+	//blah: p_v1alpha1.UnimplementedPokerAPIServer{},
+	//}
+}
+
+//func () mustEmbedUnimplementedPokerAPIServer() {}
+
+func (s *grpcServer) mustEmbedUnimplementedPokerAPIServer() {
+	//	s.unimp.ServeGRPC(ctx)
 }
 
 func (s *grpcServer) GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (*p_v1alpha1.GetGameResponse, error) {

@@ -9,6 +9,7 @@ import (
 
 type Service interface {
 	GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (*p_v1alpha1.GetGameResponse, error)
+	mustEmbedUnimplementedPokerAPIServer()
 }
 
 type service struct {
@@ -21,6 +22,10 @@ func NewService(
 	return &service{
 		logger: l,
 	}
+}
+
+func (s *service) mustEmbedUnimplementedPokerAPIServer() {
+
 }
 
 func (s *service) GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (*p_v1alpha1.GetGameResponse, error) {
@@ -72,9 +77,9 @@ func (s *service) GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (
 
 	return &p_v1alpha1.GetGameResponse{
 		Deal: &p_v1alpha1.Deal{
-			Hands:       hands,
-			Board:       board,
-			HandResults: handResults,
+			Hands:      hands,
+			Board:      board,
+			HandResult: handResults,
 		},
 	}, nil
 }

@@ -9,7 +9,7 @@ TIMESTAMP := $(shell date "+%Y%m%d%H%M%S")
 $(eval TAG=$(CURRENT_BRANCH))
 
 proto:
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/poker.proto
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/v1alpha1/poker.proto
 
 build-linux:
 	GOOS=linux GOARCH=amd64 go build ./cmd/main.go && mv main ./bin/application

@@ -13,34 +13,29 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package app
 
 import (
-	"fmt"
-	"os"
+	"github.com/go-kit/kit/log"
 	"github.com/spf13/cobra"
-
-	"github.com/spf13/viper"
 )
-
 
 func init() {
 	log.SetFormatter(&log.JSONFormatter{})
 }
 
-
 func New() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "pokerservice",
-		Short: "Poker service"
+		Use:   "pokerservice",
+		Short: "Poker service",
 	}
 
 	//TODO - ADD PARAMS PICKED UP BY ENV VARIABLES HERE
 
 	cmd.AddCommand(newServerCmd())
-
-
+	return cmd
 }
+
 /*
 var cfgFile string
 
@@ -103,4 +98,3 @@ func initConfig() {
 	}
 }
 */
-

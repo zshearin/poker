@@ -97,5 +97,5 @@ var PokerAPI_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "api/poker.proto",
+	Metadata: "api/v1alpha1/poker.proto",
 }

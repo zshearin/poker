@@ -1,7 +1,6 @@
-package cmd
+package app
 
 import (
-	"context"
 	"fmt"
 	"net"
 	"net/http"
@@ -64,11 +63,11 @@ func runServerCmd(cmd *cobra.Command, args []string) {
 	grpcGateway := runtime.NewServeMux(
 		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
 	)
-	grpcOpts := []grpc.DialOption{grpc.WithInsecure()}
-	err := p_v1alpha1.RegisterPokerAPIHandlerFromEndpoint(context.Background(), grpcGateway, grpcAddr, grpcOpts)
-	if err != nil {
-		log.Fatalf("cannot create gRPC to HTTP Gateway server endpoints: %s", err)
-	}
+	// grpcOpts := []grpc.DialOption{grpc.WithInsecure()}
+	// err := p_v1alpha1.RegisterPokerAPIHandlerFromEndpoint(context.Background(), grpcGateway, grpcAddr, grpcOpts)
+	// if err != nil {
+	// 	log.Fatalf("cannot create gRPC to HTTP Gateway server endpoints: %s", err)
+	// }
 
 	errs := make(chan error, 2)
 

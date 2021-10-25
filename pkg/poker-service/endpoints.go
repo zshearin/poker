@@ -2,7 +2,7 @@ package pokerservice
 
 import (
 	"context"
-	"log"
+	//"log"
 
 	"github.com/go-kit/kit/endpoint"
 	"github.com/go-kit/kit/log"
