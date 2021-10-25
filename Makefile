@@ -17,11 +17,20 @@ build-linux:
 tag:
 	@echo $(TAG)
 
-build:
+build: check-protoc proto build-bin
+
+check-protoc:
+	@echo "Checking if protoc command line tool is installed"
+	protoc --version
+
+build-bin:
 	go build -o poker
 
 run:
 	go run main.go deal
+
+clean:
+	rm poker
 
 test:
 	go test ./cmd/dealer/...

@@ -3,13 +3,12 @@ package pokerservice
 import (
 	"context"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	p_v1alpha1 "github.com/zshearin/poker/api/v1alpha1"
 )
 
 type Service interface {
 	GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (*p_v1alpha1.GetGameResponse, error)
-	mustEmbedUnimplementedPokerAPIServer()
 }
 
 type service struct {
@@ -22,10 +21,6 @@ func NewService(
 	return &service{
 		logger: l,
 	}
-}
-
-func (s *service) mustEmbedUnimplementedPokerAPIServer() {
-
 }
 
 func (s *service) GetGame(ctx context.Context, req *p_v1alpha1.GetGameRequest) (*p_v1alpha1.GetGameResponse, error) {

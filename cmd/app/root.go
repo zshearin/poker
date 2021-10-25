@@ -16,13 +16,13 @@ limitations under the License.
 package app
 
 import (
-	"github.com/go-kit/kit/log"
+	//"github.com/go-kit/kit/log"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	log.SetFormatter(&log.JSONFormatter{})
-}
+// func init() {
+// 	log.SetFormatter(&log.JSONFormatter{})
+// }
 
 func New() *cobra.Command {
 	cmd := &cobra.Command{
@@ -33,6 +33,7 @@ func New() *cobra.Command {
 	//TODO - ADD PARAMS PICKED UP BY ENV VARIABLES HERE
 
 	cmd.AddCommand(newServerCmd())
+	cmd.AddCommand(dealCmd())
 	return cmd
 }
 

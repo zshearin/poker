@@ -3,7 +3,7 @@ package pokerservice
 import (
 	"context"
 
-	"github.com/go-kit/kit/log"
+	"github.com/go-kit/log"
 	p_v1alpha1 "github.com/zshearin/poker/api/v1alpha1"
 )
 
