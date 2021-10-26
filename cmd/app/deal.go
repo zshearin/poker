@@ -1,5 +1,5 @@
 /*
-Copyright © 2021 NAME HERE <EMAIL ADDRESS>
+Copyright © 2021 Zach Shearin zshearin617@gmail.com
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package cmd
+package app
 
 import (
 	"errors"
@@ -58,16 +58,16 @@ func runDealCmd(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func init() {
-	rootCmd.AddCommand(dealCmd())
+// func init() {
+// 	rootCmd.AddCommand(dealCmd())
 
-	// Here you will define your flags and configuration settings.
+// 	// Here you will define your flags and configuration settings.
 
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// dealCmd.PersistentFlags().String("foo", "", "A help for foo")
+// 	// Cobra supports Persistent Flags which will work for this command
+// 	// and all subcommands, e.g.:
+// 	// dealCmd.PersistentFlags().String("foo", "", "A help for foo")
 
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// dealCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
+// 	// Cobra supports local flags which will only run when this command
+// 	// is called directly, e.g.:
+// 	// dealCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+// }

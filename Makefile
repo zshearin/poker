@@ -8,17 +8,29 @@ TIMESTAMP := $(shell date "+%Y%m%d%H%M%S")
 #$(eval TAG=$(CURRENT_BRANCH)_$(TIMESTAMP))
 $(eval TAG=$(CURRENT_BRANCH))
 
+proto:
+	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative api/v1alpha1/poker.proto
+
 build-linux:
 	GOOS=linux GOARCH=amd64 go build ./cmd/main.go && mv main ./bin/application
 
 tag:
 	@echo $(TAG)
 
-build:
+build: check-protoc proto build-bin
+
+check-protoc:
+	@echo "Checking if protoc command line tool is installed"
+	protoc --version
+
+build-bin:
 	go build -o poker
 
 run:
 	go run main.go deal
+
+clean:
+	rm poker
 
 test:
 	go test ./cmd/dealer/...
