@@ -26,7 +26,7 @@ import (
 
 func New() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "pokerservice",
+		Use:   "poker",
 		Short: "Poker service",
 	}
 
