@@ -19,7 +19,7 @@ import (
 	"errors"
 
 	"github.com/spf13/cobra"
-	dealer "github.com/zshearin/poker/cmd/dealer"
+	dealer "github.com/zshearin/poker/backend/pkg/dealer"
 )
 
 var (

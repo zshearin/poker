@@ -15,9 +15,8 @@ limitations under the License.
 */
 package main
 
-import "github.com/zshearin/poker/cmd/app"
+import "github.com/zshearin/poker/backend/cmd/app"
 
 func main() {
 	app.New().Execute()
-	//	cmd.Execute()
 }
