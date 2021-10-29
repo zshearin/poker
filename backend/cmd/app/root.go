@@ -33,10 +33,6 @@ func New() *cobra.Command {
 	//TODO - ADD PARAMS PICKED UP BY ENV VARIABLES HERE
 
 	cmd.AddCommand(newServerCmd())
-<<<<<<< HEAD:backend/pkg/app/root.go
-=======
-	//	cmd.AddCommand(newHTTPServerCmd())
->>>>>>> e870b7b (make gRPC work and have http/gRPC server):backend/cmd/app/root.go
 	cmd.AddCommand(dealCmd())
 	return cmd
 }
