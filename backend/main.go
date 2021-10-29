@@ -15,16 +15,8 @@ limitations under the License.
 */
 package main
 
-<<<<<<< HEAD:main.go
-import "github.com/zshearin/poker/cmd/app"
-
-func main() {
-	app.New().Execute()
-	//	cmd.Execute()
-=======
 import "github.com/zshearin/poker/backend/cmd/app"
 
 func main() {
 	app.New().Execute()
->>>>>>> e870b7b (make gRPC work and have http/gRPC server):backend/main.go
 }
