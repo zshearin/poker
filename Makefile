@@ -8,6 +8,15 @@ TIMESTAMP := $(shell date "+%Y%m%d%H%M%S")
 #$(eval TAG=$(CURRENT_BRANCH)_$(TIMESTAMP))
 $(eval TAG=$(CURRENT_BRANCH))
 
+#NOTE - TO BE USED ON MAC ONLY WITH BREW INSTALLED - NEED TO INSTALL BREW FIRST 
+#Install this, make sure the GOPATH is absolute defined (for some reason cannot resolve ~ add the below to .bashrc or .zshrc):
+#export GOPATH=$HOME/Go
+#export PATH=$GOPATH/bin:$PATH
+setup-proto:
+	brew install protobuf
+	go get -u github.com/golang/protobuf/{proto,protoc-gen-go}
+	go get -u github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway
+
 proto-new:
 	mkdir -p backend/api/generated
 	protoc -I. -I $(GOPATH)/pkg/mod/github.com/grpc-ecosystem/grpc-gateway@v1.16.0/third_party/googleapis/ --go_out=plugins=grpc:backend/api/generated/. --grpc-gateway_out=logtostderr=true:backend/api/generated/. backend/api/v1alpha1/poker.proto
