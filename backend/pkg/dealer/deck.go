@@ -5,25 +5,25 @@ import (
 	"time"
 )
 
-//Hands is a list of Cards objects.
+// Hands is a list of Cards objects.
 type Hands []Cards
 
-//Cards is a list of Card objects.  It can be used as a deck or a hand
+// Cards is a list of Card objects.  It can be used as a deck or a hand
 type Cards []Card
 
-//Card is a single element in the deck
+// Card is a single element in the deck
 type Card struct {
-	Suit  string
-	Value string
+	Suit  string `json:"suit"`
+	Value string `json:"value"`
 }
 
-//Deck is a Cards object and the next card to use
+// Deck is a Cards object and the next card to use
 type Deck struct {
 	Cards         []Card
 	NextCardIndex int
 }
 
-//GetDeck returns a sorted deck of cards
+// GetDeck returns a sorted deck of cards
 func GetDeck() Deck {
 	suits := []string{"S", "H", "C", "D"}
 	values := []string{"2", "3", "4", "5", "6", "7", "8", "9", "T", "J", "Q", "K", "A"}
@@ -42,13 +42,13 @@ func GetDeck() Deck {
 	return deck
 }
 
-//Shuffle shuffles a deck of cards
+// Shuffle shuffles a deck of cards
 func (d *Deck) Shuffle() {
 	rand.Seed(time.Now().UnixNano())
 	rand.Shuffle(len(d.Cards), func(i, j int) { d.Cards[i], d.Cards[j] = d.Cards[j], d.Cards[i] })
 }
 
-//ByNumber implemented for sort function to sort cards by number
+// ByNumber implemented for sort function to sort cards by number
 type ByNumber Cards
 
 func (n ByNumber) Len() int { return len(n) }
@@ -71,7 +71,7 @@ func (n ByNumber) Less(i, j int) bool {
 
 func (n ByNumber) Swap(i, j int) { n[i], n[j] = n[j], n[i] }
 
-//Sort highest to lowest based on Value param
+// Sort highest to lowest based on Value param
 func (c *Cards) Sort() {
 
 }
