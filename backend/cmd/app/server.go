@@ -1,22 +1,14 @@
 package app
 
 import (
-	"context"
+	"encoding/json"
 	"fmt"
-	"log"
-	"net"
+	"io"
 	"net/http"
-	"os"
-	"os/signal"
-	"syscall"
+	"strconv"
 
-	kitlog "github.com/go-kit/log"
-	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
-	ps "github.com/zshearin/poker/backend/pkg/poker-service"
-	"google.golang.org/grpc"
-
-	p_v1alpha1 "github.com/zshearin/poker/backend/api/v1alpha1"
+	"github.com/rs/cors"
 )
 
 var (
@@ -37,64 +29,61 @@ func newServerCmd() *cobra.Command {
 }
 
 func runServerCmd(cmd *cobra.Command, args []string) {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/game", getGame)
+	handler := cors.Default().Handler(mux)
+	http.ListenAndServe(httpAddr, handler)
+}
 
-	var logger kitlog.Logger
-
-	logger = kitlog.NewJSONLogger(kitlog.NewSyncWriter(os.Stderr))
-	logger = kitlog.With(logger, "timestamp", kitlog.DefaultTimestampUTC)
-
-	//Service endpoints
-	var (
-		pokerServiceLogger = kitlog.With(logger, "service", "poker")
-		pokerService       = ps.NewService(pokerServiceLogger)
-
-		pokerServiceProxyEndpoints = ps.CreateEndpoints(pokerService, pokerServiceLogger)
-	)
-
-	// gRPC transport
-	var (
-		grpcLogger      = kitlog.With(logger, "component", "grpc")
-		psGrpcTransport = ps.NewGrpcTransport(pokerServiceProxyEndpoints, grpcLogger)
-	)
-
-	grpcServer := grpc.NewServer()
-	{
-		p_v1alpha1.RegisterPokerAPIServer(grpcServer, psGrpcTransport)
+func getHandsValueOrDefault(queryParam string) (int, error) {
+	// if not specified, use 6 as default
+	if queryParam == "" {
+		return 6, nil
 	}
 
-	grpcGateway := runtime.NewServeMux(
-		runtime.WithMarshalerOption(runtime.MIMEWildcard, &runtime.JSONPb{OrigName: true, EmitDefaults: true}),
-	)
-
-	grpcOpts := []grpc.DialOption{grpc.WithInsecure()}
-	err := p_v1alpha1.RegisterPokerAPIHandlerFromEndpoint(context.Background(), grpcGateway, grpcAddr, grpcOpts)
+	hands, err := strconv.Atoi(queryParam)
 	if err != nil {
-		log.Fatalf("cannot create gRPC to HTTP Gateway server endpoints: %s", err)
+		return 0, err
+	} else if hands > 10 || hands < 2 {
+		return hands, err
 	}
 
-	errs := make(chan error, 2)
+	return hands, nil
+}
 
-	go func() {
-		lis, err := net.Listen("tcp", grpcAddr)
-		if err != nil {
-			logger.Log("transport", "grpc", "during", "listen", "err", err)
-			os.Exit(1)
-		}
-		logger.Log("transport", "grpc", "address", grpcAddr, "msg", "listening")
-		errs <- grpcServer.Serve(lis)
-	}()
+func getPrintParameter(queryParam string) (bool, error) {
+	if queryParam == "" {
+		return false, nil
+	}
 
-	go func() {
-		logger.Log("transport", "http", "address", httpAddr, "msg", "listening")
-		//add log msg
-		errs <- http.ListenAndServe(httpAddr, grpcGateway)
-	}()
+	return strconv.ParseBool(queryParam)
+}
 
-	go func() {
-		c := make(chan os.Signal, 1)
-		signal.Notify(c, syscall.SIGINT)
-		errs <- fmt.Errorf("%s", <-c)
-	}()
+func getGame(w http.ResponseWriter, r *http.Request) {
 
-	logger.Log("terminated", <-errs)
+	fmt.Printf("got /game request\n")
+
+	hands, err := getHandsValueOrDefault(r.FormValue("hands"))
+	if err != nil {
+		io.WriteString(w, "Bad hands parameter\n")
+		return
+	}
+
+	game := shuffleAndDeal(hands)
+
+	shouldPrintStr := r.FormValue("print")
+	shouldPrint, err := getPrintParameter(shouldPrintStr)
+	if err != nil {
+		io.WriteString(w, "Bad print parameter\n")
+		return
+	}
+	if shouldPrint {
+		game.PrintBoardAndHands()
+		game.PrintRanksAndBestFive()
+	}
+
+	err = json.NewEncoder(w).Encode(game)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+	}
 }

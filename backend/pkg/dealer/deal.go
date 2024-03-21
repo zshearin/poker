@@ -34,32 +34,32 @@ func getStringForRank(rank int) string {
 
 }
 
-//Players is a list of Player objects
+// Players is a list of Player objects
 type Players []Player
 
-//Player is a player that is part of a deal
+// Player is a player that is part of a deal
 type Player struct {
-	Num      int
-	BestFive Cards
-	HandName string
+	Num      int    `json:"playerID"`
+	BestFive Cards  `json:"bestFive"`
+	HandName string `json:"handName"`
 }
 
-//Deal is the cards for the flop, turn, river and hands dealt to each player
+// Deal is the cards for the flop, turn, river and hands dealt to each player
 type Deal struct {
-	Hands       Hands
-	Board       Cards
-	HandResults []HandResult
+	Hands       Hands        `json:"hands"`
+	Board       Cards        `json:"board"`
+	HandResults []HandResult `json:"results"`
 }
 
-//HandResult is the player number and the hand that they had
-//This keeps track of the relative rank between players and the type of hand
-//that they have
+// HandResult is the player number and the hand that they had
+// This keeps track of the relative rank between players and the type of hand
+// that they have
 type HandResult struct {
-	Player           Player
-	RelativeHandRank int
+	Player           Player `json:"player"`
+	RelativeHandRank int    `json:"rank"`
 }
 
-//GetDeal deals hands and returns a deal object
+// GetDeal deals hands and returns a deal object
 func (d *Deck) GetDeal(numPlayers int) Deal {
 
 	hands := d.Deal(numPlayers, 2)
@@ -105,7 +105,7 @@ func (d *Deck) GetDeal(numPlayers int) Deal {
 	return deal
 }
 
-//sort players sorts the list of players to an ordered list based on ranking
+// sort players sorts the list of players to an ordered list based on ranking
 func sortPlayers(pList Players) Players {
 
 	playersList := make(Players, len(pList))
@@ -181,41 +181,41 @@ func getRankOrderMap(p Players) map[int]Players {
 	return winnerMap
 }
 
-//DealHoldEm deals 2 cards to the number of hands passed in
-//eg: if 6 is passed in, it will return 6 hands of 2
+// DealHoldEm deals 2 cards to the number of hands passed in
+// eg: if 6 is passed in, it will return 6 hands of 2
 func (d *Deck) DealHoldEm(numHands int) Hands {
 	return d.Deal(numHands, 2)
 }
 
-//GetFlop burns a card and returns the 3 after
+// GetFlop burns a card and returns the 3 after
 func (d *Deck) GetFlop() Cards {
 	return d.BurnAndFlip(3)
 }
 
-//GetTurn burns a card and returns the card after
+// GetTurn burns a card and returns the card after
 func (d *Deck) GetTurn() Cards {
 	return d.BurnAndFlip(1)
 }
 
-//GetRiver burns  a card and returns the card after
+// GetRiver burns  a card and returns the card after
 func (d *Deck) GetRiver() Cards {
 	return d.BurnAndFlip(1)
 }
 
-//Reset resets the deck index to 0
+// Reset resets the deck index to 0
 func (d *Deck) Reset() {
 	d.NextCardIndex = 0
 }
 
-//GetCard gets the next card in a deck and updates the index of the deck object
+// GetCard gets the next card in a deck and updates the index of the deck object
 func (d *Deck) GetCard() Card {
 	card := d.Cards[d.NextCardIndex]
 	d.NextCardIndex++
 	return card
 }
 
-//BurnAndFlip takes in a parameter that is the number of cards to get
-//It first skips a card then grabs the desired number of cards
+// BurnAndFlip takes in a parameter that is the number of cards to get
+// It first skips a card then grabs the desired number of cards
 func (d *Deck) BurnAndFlip(numCards int) Cards {
 
 	var cards Cards
@@ -232,8 +232,8 @@ func (d *Deck) BurnAndFlip(numCards int) Cards {
 
 }
 
-//Deal takes in the number of hands and the number of cards per hand
-//and creates the hands from the deck, updating the next card as it goes
+// Deal takes in the number of hands and the number of cards per hand
+// and creates the hands from the deck, updating the next card as it goes
 func (d *Deck) Deal(numHands, numCards int) Hands {
 
 	var hands Hands
